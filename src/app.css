@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   --color-brand: #1a1d24;
@@ -6,12 +6,15 @@
   --color-ok: #10b981;
   --color-warn: #f59e0b;
   --color-danger: #ef4444;
-  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro", system-ui, sans-serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro', system-ui, sans-serif;
 }
 
-:root { color-scheme: light dark; }
+:root {
+  color-scheme: light dark;
+}
 
-html, body {
+html,
+body {
   margin: 0;
   font-family: var(--font-sans);
   background: oklch(0.98 0.01 250);
@@ -19,7 +22,8 @@ html, body {
 }
 
 @media (prefers-color-scheme: dark) {
-  html, body {
+  html,
+  body {
     background: oklch(0.18 0.02 260);
     color: oklch(0.96 0.01 250);
   }
