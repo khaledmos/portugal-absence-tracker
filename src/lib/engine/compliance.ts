@@ -1,5 +1,5 @@
-import { addMonths, format, parseISO } from 'date-fns';
-import type { Card, Settings, Trip, ISODate } from '../domain/types';
+import { addMonths, addYears, format, parseISO } from 'date-fns';
+import type { Card, DaycountConvention, Settings, Trip, ISODate } from '../domain/types';
 import { isSchengen } from '../domain/countries';
 import { permitRules } from '../domain/permit-rules';
 import { clipTrip, daysBetween } from './dates';
@@ -79,7 +79,10 @@ function scopeFor(
   const pastInScope = past.filter(filter);
   const plannedInScope = planned.filter(filter);
 
-  const interpolatedUsed = interpolatedAbsence(pastInScope, settings.daycountConvention);
+  const interpolatedUsed =
+    rule.windowYears > 0
+      ? maxInterpolatedInSlidingWindow(pastInScope, settings.daycountConvention, rule.windowYears)
+      : interpolatedAbsence(pastInScope, settings.daycountConvention);
   const consecutiveUsed = longestConsecutiveStreak(pastInScope, settings.daycountConvention);
 
   let currentlyAbroad = false;
@@ -100,7 +103,14 @@ function scopeFor(
   }
 
   const projectedTrips = [...pastInScope, ...plannedInScope];
-  const projectedInterpolated = interpolatedAbsence(projectedTrips, settings.daycountConvention);
+  const projectedInterpolated =
+    rule.windowYears > 0
+      ? maxInterpolatedInSlidingWindow(
+          projectedTrips,
+          settings.daycountConvention,
+          rule.windowYears
+        )
+      : interpolatedAbsence(projectedTrips, settings.daycountConvention);
   const projectedConsecutive = longestConsecutiveStreak(
     projectedTrips,
     settings.daycountConvention
@@ -124,4 +134,21 @@ function scopeFor(
       interpolatedUsed: projectedInterpolated
     }
   };
+}
+
+function maxInterpolatedInSlidingWindow(
+  trips: Trip[],
+  convention: DaycountConvention,
+  windowYears: number
+): number {
+  if (trips.length === 0) return 0;
+  const starts = trips.map((t) => t.departureDate);
+  let best = 0;
+  for (const start of starts) {
+    const end = format(addYears(parseISO(start), windowYears), 'yyyy-MM-dd');
+    const clipped = trips.map((t) => clipTrip(t, start, end)).filter((t): t is Trip => t !== null);
+    const value = interpolatedAbsence(clipped, convention);
+    if (value > best) best = value;
+  }
+  return best;
 }

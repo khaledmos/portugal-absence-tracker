@@ -122,3 +122,55 @@ describe('computeCardCompliance', () => {
     expect(r.elapsedDays).toBe(283);
   });
 });
+
+describe('computeCardCompliance — permanent_5yr', () => {
+  const permCard: Card = {
+    id: 'p1',
+    label: 'Permanent',
+    type: 'permanent_5yr',
+    issuedDate: '2025-01-01',
+    expiryDate: '2030-01-01'
+  };
+
+  it('uses the largest interpolated value across any 3-year window', () => {
+    const big: Trip = {
+      id: 'big',
+      departureDate: '2027-01-01',
+      returnDate: '2029-08-08',
+      destinationCountry: 'GB',
+      status: 'past'
+    };
+    const r = computeCardCompliance({
+      card: permCard,
+      trips: [big],
+      today: '2030-01-01',
+      settings
+    });
+    expect(r.portugal.interpolated.budgetDays).toBe(913);
+    expect(r.portugal.interpolated.used).toBeGreaterThan(913);
+  });
+
+  it('reports a smaller interpolated count when the trips are spread over 5 years (sliding window finds the worst 3yr)', () => {
+    const t1: Trip = {
+      id: 't1',
+      departureDate: '2025-02-01',
+      returnDate: '2026-09-25',
+      destinationCountry: 'GB',
+      status: 'past'
+    };
+    const t2: Trip = {
+      id: 't2',
+      departureDate: '2027-09-26',
+      returnDate: '2029-05-19',
+      destinationCountry: 'GB',
+      status: 'past'
+    };
+    const r = computeCardCompliance({
+      card: permCard,
+      trips: [t1, t2],
+      today: '2030-01-01',
+      settings
+    });
+    expect(r.portugal.interpolated.used).toBeLessThan(1200);
+  });
+});
