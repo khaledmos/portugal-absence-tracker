@@ -71,9 +71,7 @@
       onclick={() => (view = 'projected')}>Including planned trips</button
     >
   </div>
-  <p class="mb-3 text-xs text-neutral-500">Planned trips are only included in projected view.</p>
-
-  <div class="mb-4 grid grid-cols-2 gap-3">
+  <div class="mt-3 mb-4 grid grid-cols-2 gap-3">
     <AbsenceTile
       label="Outside Portugal"
       used={view === 'today'
