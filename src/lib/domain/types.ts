@@ -14,19 +14,39 @@ export type Card = {
 
 export type TripStatus = 'past' | 'planned';
 
-export type TripPurpose = 'business' | 'work' | 'cultural' | 'social' | 'personal' | 'medical';
+export type TripPurpose =
+  | 'business'
+  | 'work'
+  | 'personal'
+  | 'tourism'
+  | 'family'
+  | 'medical'
+  | 'other';
 
 export type Trip = {
   id: string;
-  departureDate: ISODate;
-  returnDate: ISODate;
-  destinationCountry: string; // ISO 3166-1 alpha-2
-  destinationCity?: string;
-  departureAirport?: string;
-  arrivalAirport?: string;
   status: TripStatus;
   needsReview?: boolean;
-  purpose?: TripPurpose;
+
+  // Portugal absence interval (required)
+  portugalExitDate: ISODate;
+  portugalReturnDate: ISODate;
+
+  // Schengen absence sub-interval (optional)
+  schengenExitDate?: ISODate;
+  schengenReturnDate?: ISODate;
+
+  // Destination
+  primaryDestinationCountry: string; // ISO 3166-1 alpha-2
+  otherCountriesVisited?: string[];
+
+  // Optional border-crossing locations (free text)
+  schengenExitLocation?: string;
+  schengenReturnLocation?: string;
+
+  // Multi-select purposes
+  purposes?: TripPurpose[];
+
   notes?: string;
 };
 
@@ -37,13 +57,13 @@ export type ScopeView = 'portugal' | 'schengen' | 'both';
 export type Settings = {
   daycountConvention: DaycountConvention;
   defaultScopeView: ScopeView;
-  lastBackupAt?: string; // ISO datetime
-  acceptedDisclaimerAt?: string; // ISO datetime
+  lastBackupAt?: string;
+  acceptedDisclaimerAt?: string;
 };
 
 export type CountryRecord = {
-  code: string; // ISO 3166-1 alpha-2 (uppercase)
+  code: string;
   name: string;
-  flag: string; // emoji
+  flag: string;
   isSchengen: boolean;
 };

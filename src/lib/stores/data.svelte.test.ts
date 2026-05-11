@@ -18,9 +18,9 @@ describe('autoFlipOverdue', () => {
   it('flips planned → past with needsReview when return date has passed', async () => {
     const t: Trip = {
       id: 't1',
-      departureDate: '2026-04-01',
-      returnDate: '2026-04-10',
-      destinationCountry: 'GB',
+      portugalExitDate: '2026-04-01',
+      portugalReturnDate: '2026-04-10',
+      primaryDestinationCountry: 'GB',
       status: 'planned'
     };
     await repos.trips.put(t);
@@ -34,9 +34,9 @@ describe('autoFlipOverdue', () => {
   it('does not flip same-day returns (1-day buffer)', async () => {
     const t: Trip = {
       id: 't1',
-      departureDate: '2026-05-09',
-      returnDate: '2026-05-10',
-      destinationCountry: 'GB',
+      portugalExitDate: '2026-05-09',
+      portugalReturnDate: '2026-05-10',
+      primaryDestinationCountry: 'GB',
       status: 'planned'
     };
     await repos.trips.put(t);
@@ -47,9 +47,9 @@ describe('autoFlipOverdue', () => {
   it('does not touch already-past trips', async () => {
     const t: Trip = {
       id: 't1',
-      departureDate: '2026-04-01',
-      returnDate: '2026-04-10',
-      destinationCountry: 'GB',
+      portugalExitDate: '2026-04-01',
+      portugalReturnDate: '2026-04-10',
+      primaryDestinationCountry: 'GB',
       status: 'past'
     };
     await repos.trips.put(t);

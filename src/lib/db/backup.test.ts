@@ -25,9 +25,9 @@ describe('exportToJSON', () => {
     };
     const trip: Trip = {
       id: 't1',
-      departureDate: '2026-01-10',
-      returnDate: '2026-01-15',
-      destinationCountry: 'GB',
+      portugalExitDate: '2026-01-10',
+      portugalReturnDate: '2026-01-15',
+      primaryDestinationCountry: 'GB',
       status: 'past'
     };
     await repos.cards.put(card);
@@ -42,10 +42,10 @@ describe('exportToJSON', () => {
 });
 
 describe('importFromJSON', () => {
-  it('restores cards and trips, replacing existing data', async () => {
+  it('restores cards and trips, replacing existing data (v2 round-trip)', async () => {
     const payload = {
-      schemaVersion: 1,
-      exportedAt: '2026-05-10T12:00:00Z',
+      schemaVersion: 2,
+      exportedAt: '2026-05-12T12:00:00Z',
       cards: [
         {
           id: 'c1',
@@ -58,9 +58,9 @@ describe('importFromJSON', () => {
       trips: [
         {
           id: 't1',
-          departureDate: '2025-06-01',
-          returnDate: '2025-06-05',
-          destinationCountry: 'TR',
+          portugalExitDate: '2025-06-01',
+          portugalReturnDate: '2025-06-05',
+          primaryDestinationCountry: 'TR',
           status: 'past'
         }
       ],
@@ -71,7 +71,7 @@ describe('importFromJSON', () => {
     const trips = await repos.trips.list();
     const settings = await repos.settings.get();
     expect(cards[0].label).toBe('Restored');
-    expect(trips[0].destinationCountry).toBe('TR');
+    expect(trips[0].primaryDestinationCountry).toBe('TR');
     expect(settings.daycountConvention).toBe('inclusive_both');
   });
 

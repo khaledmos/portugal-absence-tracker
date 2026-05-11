@@ -2,7 +2,6 @@
   import { untrack } from 'svelte';
   import { data, todayISO } from '$lib/stores/data.svelte';
   import { computeCardCompliance } from '$lib/engine/compliance';
-  import { isSchengen } from '$lib/domain/countries';
   import CountryPicker from '$lib/components/CountryPicker.svelte';
   import type { Trip, TripStatus, TripPurpose } from '$lib/domain/types';
   import { v4 as uuid } from 'uuid';
@@ -10,27 +9,33 @@
   let { initial, onClose }: { initial?: Trip; onClose: () => void } = $props();
 
   let status = $state<TripStatus>(untrack(() => initial?.status ?? 'past'));
-  let departureDate = $state(untrack(() => initial?.departureDate ?? ''));
-  let returnDate = $state(untrack(() => initial?.returnDate ?? ''));
-  let destinationCountry = $state(untrack(() => initial?.destinationCountry ?? ''));
-  let destinationCity = $state(untrack(() => initial?.destinationCity ?? ''));
-  let departureAirport = $state(untrack(() => initial?.departureAirport ?? ''));
-  let arrivalAirport = $state(untrack(() => initial?.arrivalAirport ?? ''));
-  let purpose = $state<TripPurpose | undefined>(untrack(() => initial?.purpose));
+  let portugalExitDate = $state(untrack(() => initial?.portugalExitDate ?? ''));
+  let portugalReturnDate = $state(untrack(() => initial?.portugalReturnDate ?? ''));
+  let primaryDestinationCountry = $state(untrack(() => initial?.primaryDestinationCountry ?? ''));
+  let purposes = $state<TripPurpose[]>(untrack(() => initial?.purposes ?? []));
   let notes = $state(untrack(() => initial?.notes ?? ''));
 
-  const purposes: TripPurpose[] = ['personal', 'business', 'work', 'cultural', 'social', 'medical'];
+  const purposeOptions: TripPurpose[] = [
+    'business',
+    'work',
+    'personal',
+    'tourism',
+    'family',
+    'medical',
+    'other'
+  ];
+
+  function togglePurpose(p: TripPurpose) {
+    purposes = purposes.includes(p) ? purposes.filter((x) => x !== p) : [...purposes, p];
+  }
 
   const draft: Trip = $derived({
     id: initial?.id ?? '__draft__',
-    departureDate,
-    returnDate,
-    destinationCountry,
-    destinationCity: destinationCity || undefined,
-    departureAirport: departureAirport || undefined,
-    arrivalAirport: arrivalAirport || undefined,
     status,
-    purpose,
+    portugalExitDate,
+    portugalReturnDate,
+    primaryDestinationCountry,
+    purposes: purposes.length > 0 ? purposes : undefined,
     notes: notes || undefined
   });
 
@@ -40,7 +45,9 @@
   );
 
   const preview = $derived.by(() => {
-    if (!activeCard || !departureDate || !returnDate || !destinationCountry) return null;
+    if (!activeCard || !portugalExitDate || !portugalReturnDate || !primaryDestinationCountry) {
+      return null;
+    }
     const before = computeCardCompliance({
       card: activeCard,
       trips: data.trips,
@@ -60,18 +67,15 @@
   });
 
   async function save() {
-    if (!destinationCountry || !departureDate || !returnDate) return;
+    if (!primaryDestinationCountry || !portugalExitDate || !portugalReturnDate) return;
     const trip: Trip = {
       id: initial?.id ?? uuid(),
-      departureDate,
-      returnDate,
-      destinationCountry,
-      destinationCity: destinationCity || undefined,
-      departureAirport: departureAirport || undefined,
-      arrivalAirport: arrivalAirport || undefined,
       status,
       needsReview: false,
-      purpose,
+      portugalExitDate,
+      portugalReturnDate,
+      primaryDestinationCountry,
+      purposes: purposes.length > 0 ? purposes : undefined,
       notes: notes || undefined
     };
     await data.upsertTrip(trip);
@@ -102,51 +106,37 @@
 
   <div class="grid grid-cols-2 gap-2">
     <label class="block text-sm"
-      >Departure
-      <input type="date" class="mt-1 w-full rounded border px-2 py-1" bind:value={departureDate} />
-    </label>
-    <label class="block text-sm"
-      >Return
-      <input type="date" class="mt-1 w-full rounded border px-2 py-1" bind:value={returnDate} />
-    </label>
-  </div>
-
-  <div class="text-sm">
-    <div class="mb-1">Destination</div>
-    <CountryPicker bind:value={destinationCountry} />
-  </div>
-
-  <label class="block text-sm"
-    >City
-    <input class="mt-1 w-full rounded border px-2 py-1" bind:value={destinationCity} />
-  </label>
-
-  <div class="grid grid-cols-2 gap-2">
-    <label class="block text-sm"
-      >From airport
+      >Left Portugal
       <input
+        type="date"
         class="mt-1 w-full rounded border px-2 py-1"
-        bind:value={departureAirport}
-        placeholder="LIS"
+        bind:value={portugalExitDate}
       />
     </label>
     <label class="block text-sm"
-      >To airport
+      >Returned to Portugal
       <input
+        type="date"
         class="mt-1 w-full rounded border px-2 py-1"
-        bind:value={arrivalAirport}
-        placeholder="LHR"
+        bind:value={portugalReturnDate}
       />
     </label>
   </div>
 
   <div class="text-sm">
-    Purpose
+    <div class="mb-1">Primary destination country</div>
+    <CountryPicker bind:value={primaryDestinationCountry} />
+  </div>
+
+  <div class="text-sm">
+    Purposes <span class="text-neutral-400">(optional)</span>
     <div class="mt-1 flex flex-wrap gap-1">
-      {#each purposes as p (p)}
+      {#each purposeOptions as p (p)}
         <button
-          class="rounded-full border px-2 py-1 text-xs {purpose === p ? 'bg-black text-white' : ''}"
-          onclick={() => (purpose = purpose === p ? undefined : p)}>{p}</button
+          class="rounded-full border px-2 py-1 text-xs {purposes.includes(p)
+            ? 'bg-black text-white'
+            : ''}"
+          onclick={() => togglePurpose(p)}>{p}</button
         >
       {/each}
     </div>
@@ -165,10 +155,7 @@
       / {preview.after.portugal.interpolated.budgetDays} d<br />
       Schengen: {preview.before.schengen.interpolated.used} →
       <strong>{preview.after.schengen.interpolated.used}</strong>
-      / {preview.after.schengen.interpolated.budgetDays} d<br />
-      {#if !isSchengen(destinationCountry)}<span>Outside Schengen</span>{:else}<span
-          >Inside Schengen</span
-        >{/if}
+      / {preview.after.schengen.interpolated.budgetDays} d
     </div>
   {/if}
 

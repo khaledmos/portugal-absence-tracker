@@ -17,9 +17,9 @@ const settings: Settings = {
 
 const trip = (over: Partial<Trip>): Trip => ({
   id: 't' + Math.random(),
-  departureDate: '2026-01-10',
-  returnDate: '2026-01-15',
-  destinationCountry: 'GB',
+  portugalExitDate: '2026-01-10',
+  portugalReturnDate: '2026-01-15',
+  primaryDestinationCountry: 'GB',
   status: 'past',
   ...over
 });
@@ -37,7 +37,11 @@ describe('computeCardCompliance', () => {
     const r = computeCardCompliance({
       card,
       trips: [
-        trip({ departureDate: '2025-11-04', returnDate: '2025-11-12', destinationCountry: 'GB' })
+        trip({
+          portugalExitDate: '2025-11-04',
+          portugalReturnDate: '2025-11-12',
+          primaryDestinationCountry: 'GB'
+        })
       ],
       today: '2026-05-10',
       settings
@@ -50,7 +54,11 @@ describe('computeCardCompliance', () => {
     const r = computeCardCompliance({
       card,
       trips: [
-        trip({ departureDate: '2025-09-12', returnDate: '2025-09-15', destinationCountry: 'ES' })
+        trip({
+          portugalExitDate: '2025-09-12',
+          portugalReturnDate: '2025-09-15',
+          primaryDestinationCountry: 'ES'
+        })
       ],
       today: '2026-05-10',
       settings
@@ -63,7 +71,11 @@ describe('computeCardCompliance', () => {
     const r = computeCardCompliance({
       card,
       trips: [
-        trip({ departureDate: '2025-07-25', returnDate: '2025-08-05', destinationCountry: 'GB' })
+        trip({
+          portugalExitDate: '2025-07-25',
+          portugalReturnDate: '2025-08-05',
+          primaryDestinationCountry: 'GB'
+        })
       ],
       today: '2026-05-10',
       settings
@@ -75,7 +87,11 @@ describe('computeCardCompliance', () => {
     const r = computeCardCompliance({
       card,
       trips: [
-        trip({ departureDate: '2026-05-04', returnDate: '2026-05-14', destinationCountry: 'GB' })
+        trip({
+          portugalExitDate: '2026-05-04',
+          portugalReturnDate: '2026-05-14',
+          primaryDestinationCountry: 'GB'
+        })
       ],
       today: '2026-05-10',
       settings
@@ -90,15 +106,15 @@ describe('computeCardCompliance', () => {
       card,
       trips: [
         trip({
-          departureDate: '2025-11-04',
-          returnDate: '2025-11-12',
-          destinationCountry: 'GB',
+          portugalExitDate: '2025-11-04',
+          portugalReturnDate: '2025-11-12',
+          primaryDestinationCountry: 'GB',
           status: 'past'
         }),
         trip({
-          departureDate: '2026-09-02',
-          returnDate: '2026-09-13',
-          destinationCountry: 'TR',
+          portugalExitDate: '2026-09-02',
+          portugalReturnDate: '2026-09-13',
+          primaryDestinationCountry: 'TR',
           status: 'planned'
         })
       ],
@@ -135,9 +151,9 @@ describe('computeCardCompliance — permanent_5yr', () => {
   it('uses the largest interpolated value across any 3-year window', () => {
     const big: Trip = {
       id: 'big',
-      departureDate: '2027-01-01',
-      returnDate: '2029-08-08',
-      destinationCountry: 'GB',
+      portugalExitDate: '2027-01-01',
+      portugalReturnDate: '2029-08-08',
+      primaryDestinationCountry: 'GB',
       status: 'past'
     };
     const r = computeCardCompliance({
@@ -150,19 +166,19 @@ describe('computeCardCompliance — permanent_5yr', () => {
     expect(r.portugal.interpolated.used).toBeGreaterThan(913);
   });
 
-  it('reports a smaller interpolated count when the trips are spread over 5 years (sliding window finds the worst 3yr)', () => {
+  it('reports a smaller interpolated count when the trips are spread over 5 years', () => {
     const t1: Trip = {
       id: 't1',
-      departureDate: '2025-02-01',
-      returnDate: '2026-09-25',
-      destinationCountry: 'GB',
+      portugalExitDate: '2025-02-01',
+      portugalReturnDate: '2026-09-25',
+      primaryDestinationCountry: 'GB',
       status: 'past'
     };
     const t2: Trip = {
       id: 't2',
-      departureDate: '2027-09-26',
-      returnDate: '2029-05-19',
-      destinationCountry: 'GB',
+      portugalExitDate: '2027-09-26',
+      portugalReturnDate: '2029-05-19',
+      primaryDestinationCountry: 'GB',
       status: 'past'
     };
     const r = computeCardCompliance({

@@ -3,7 +3,7 @@ import type { Card, DaycountConvention, Settings, Trip, ISODate } from '../domai
 import { isSchengen } from '../domain/countries';
 import { permitRules } from '../domain/permit-rules';
 import { clipTrip, daysBetween } from './dates';
-import { interpolatedAbsence, longestConsecutiveStreak } from './absence';
+import { interpolatedAbsence, longestConsecutiveStreak, type IntervalSelector } from './absence';
 
 export type ScopeCompliance = {
   consecutive: {
@@ -30,6 +30,15 @@ export type CardCompliance = {
   elapsedDays: number;
   portugal: ScopeCompliance;
   schengen: ScopeCompliance;
+};
+
+const portugalInterval: IntervalSelector = (t) => [t.portugalExitDate, t.portugalReturnDate];
+
+const schengenInterval: IntervalSelector = (t) => {
+  if (isSchengen(t.primaryDestinationCountry)) return null;
+  const exit = t.schengenExitDate ?? t.portugalExitDate;
+  const ret = t.schengenReturnDate ?? t.portugalReturnDate;
+  return [exit, ret];
 };
 
 export function computeCardCompliance(input: {
@@ -61,8 +70,8 @@ export function computeCardCompliance(input: {
     cardId: card.id,
     validityDays,
     elapsedDays,
-    portugal: scopeFor(past, planned, settings, todayDate, rule, false),
-    schengen: scopeFor(past, planned, settings, todayDate, rule, true)
+    portugal: scopeFor(past, planned, settings, todayDate, rule, portugalInterval),
+    schengen: scopeFor(past, planned, settings, todayDate, rule, schengenInterval)
   };
 }
 
@@ -72,25 +81,24 @@ function scopeFor(
   settings: Settings,
   today: Date,
   rule: ReturnType<typeof permitRules>,
-  outsideSchengenOnly: boolean
+  intervalOf: IntervalSelector
 ): ScopeCompliance {
-  const filter = (t: Trip) =>
-    outsideSchengenOnly ? !isSchengen(t.destinationCountry) : t.destinationCountry !== 'PT';
-  const pastInScope = past.filter(filter);
-  const plannedInScope = planned.filter(filter);
+  const conv = settings.daycountConvention;
 
   const interpolatedUsed =
     rule.windowYears > 0
-      ? maxInterpolatedInSlidingWindow(pastInScope, settings.daycountConvention, rule.windowYears)
-      : interpolatedAbsence(pastInScope, settings.daycountConvention);
-  const consecutiveUsed = longestConsecutiveStreak(pastInScope, settings.daycountConvention);
+      ? maxInterpolatedInSlidingWindow(past, conv, rule.windowYears, intervalOf)
+      : interpolatedAbsence(past, conv, intervalOf);
+  const consecutiveUsed = longestConsecutiveStreak(past, conv, intervalOf);
 
   let currentlyAbroad = false;
   let currentStreakDays: number | undefined;
   let limitDate: ISODate | undefined;
-  for (const trip of pastInScope) {
-    const dep = parseISO(trip.departureDate);
-    const ret = parseISO(trip.returnDate);
+  for (const trip of past) {
+    const interval = intervalOf(trip);
+    if (!interval) continue;
+    const dep = parseISO(interval[0]);
+    const ret = parseISO(interval[1]);
     if (dep.getTime() <= today.getTime() && today.getTime() < ret.getTime()) {
       currentlyAbroad = true;
       currentStreakDays = Math.max(
@@ -102,19 +110,12 @@ function scopeFor(
     }
   }
 
-  const projectedTrips = [...pastInScope, ...plannedInScope];
+  const projectedTrips = [...past, ...planned];
   const projectedInterpolated =
     rule.windowYears > 0
-      ? maxInterpolatedInSlidingWindow(
-          projectedTrips,
-          settings.daycountConvention,
-          rule.windowYears
-        )
-      : interpolatedAbsence(projectedTrips, settings.daycountConvention);
-  const projectedConsecutive = longestConsecutiveStreak(
-    projectedTrips,
-    settings.daycountConvention
-  );
+      ? maxInterpolatedInSlidingWindow(projectedTrips, conv, rule.windowYears, intervalOf)
+      : interpolatedAbsence(projectedTrips, conv, intervalOf);
+  const projectedConsecutive = longestConsecutiveStreak(projectedTrips, conv, intervalOf);
 
   return {
     consecutive: {
@@ -139,15 +140,17 @@ function scopeFor(
 function maxInterpolatedInSlidingWindow(
   trips: Trip[],
   convention: DaycountConvention,
-  windowYears: number
+  windowYears: number,
+  intervalOf: IntervalSelector
 ): number {
   if (trips.length === 0) return 0;
-  const starts = trips.map((t) => t.departureDate);
+  // Candidate window starts: each trip's Portugal exit date (the broader interval).
+  const starts = trips.map((t) => t.portugalExitDate);
   let best = 0;
   for (const start of starts) {
     const end = format(addYears(parseISO(start), windowYears), 'yyyy-MM-dd');
     const clipped = trips.map((t) => clipTrip(t, start, end)).filter((t): t is Trip => t !== null);
-    const value = interpolatedAbsence(clipped, convention);
+    const value = interpolatedAbsence(clipped, convention, intervalOf);
     if (value > best) best = value;
   }
   return best;

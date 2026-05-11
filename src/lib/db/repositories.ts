@@ -20,13 +20,13 @@ export class CardRepo {
 
 export class TripRepo {
   constructor(private db: TrackerDB) {}
-  list = () => this.db.trips.orderBy('departureDate').toArray();
+  list = () => this.db.trips.orderBy('portugalExitDate').toArray();
   get = (id: string) => this.db.trips.get(id);
   put = (trip: Trip) => this.db.trips.put(trip);
   delete = (id: string) => this.db.trips.delete(id);
   async plannedOverdue(today: ISODate): Promise<Trip[]> {
     const all = await this.list();
-    return all.filter((t) => t.status === 'planned' && t.returnDate < today);
+    return all.filter((t) => t.status === 'planned' && t.portugalReturnDate < today);
   }
 }
 

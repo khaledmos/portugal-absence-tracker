@@ -4,9 +4,9 @@ import type { Trip } from '../domain/types';
 
 const t = (id: string, dep: string, ret: string, country = 'GB'): Trip => ({
   id,
-  departureDate: dep,
-  returnDate: ret,
-  destinationCountry: country,
+  portugalExitDate: dep,
+  portugalReturnDate: ret,
+  primaryDestinationCountry: country,
   status: 'past'
 });
 

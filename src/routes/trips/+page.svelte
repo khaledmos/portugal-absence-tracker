@@ -15,11 +15,11 @@
   const filtered = $derived(
     data.trips
       .slice()
-      .sort((a, b) => a.departureDate.localeCompare(b.departureDate))
+      .sort((a, b) => a.portugalExitDate.localeCompare(b.portugalExitDate))
       .filter((t) => {
         if (filter === 'past') return t.status === 'past';
         if (filter === 'planned') return t.status === 'planned';
-        if (filter === 'outside') return !isSchengen(t.destinationCountry);
+        if (filter === 'outside') return !isSchengen(t.primaryDestinationCountry);
         return true;
       })
   );
@@ -32,7 +32,7 @@
   ];
 
   function isCurrent(t: Trip) {
-    return t.departureDate <= today && today < t.returnDate;
+    return t.portugalExitDate <= today && today < t.portugalReturnDate;
   }
 </script>
 
@@ -58,7 +58,7 @@
 <ul class="mt-3 space-y-2">
   {#each filtered as t (t.id)}
     {@const current = isCurrent(t)}
-    {@const sch = isSchengen(t.destinationCountry)}
+    {@const sch = isSchengen(t.primaryDestinationCountry)}
     <li
       class="rounded-xl border p-3 {current
         ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/30'
@@ -67,30 +67,25 @@
       <button class="w-full text-left" onclick={() => (editing = t)}>
         <div class="flex justify-between">
           <span class="font-semibold"
-            >{countryFlag(t.destinationCountry)}
-            {countryName(t.destinationCountry)}{t.destinationCity
-              ? ' — ' + t.destinationCity
-              : ''}</span
+            >{countryFlag(t.primaryDestinationCountry)}
+            {countryName(t.primaryDestinationCountry)}</span
           >
           <span class="text-sm font-semibold"
-            >{daysBetween(t.departureDate, t.returnDate) - 1} d</span
+            >{daysBetween(t.portugalExitDate, t.portugalReturnDate) - 1} d</span
           >
         </div>
         <div class="text-xs text-neutral-500">
-          {t.departureDate} → {t.returnDate}
-          {t.departureAirport ? '· ' + t.departureAirport : ''}{t.arrivalAirport
-            ? '→' + t.arrivalAirport
-            : ''}
+          {t.portugalExitDate} → {t.portugalReturnDate}
         </div>
-        <div class="mt-1 flex gap-1 text-xs">
+        <div class="mt-1 flex flex-wrap gap-1 text-xs">
           <span
             class="rounded px-1.5 py-0.5 {sch
               ? 'bg-blue-100 text-blue-900'
               : 'bg-amber-100 text-amber-900'}">{sch ? 'Schengen' : 'Outside Schengen'}</span
           >
-          {#if t.purpose}<span class="rounded bg-emerald-100 px-1.5 py-0.5 text-emerald-900"
-              >{t.purpose}</span
-            >{/if}
+          {#each t.purposes ?? [] as p (p)}
+            <span class="rounded bg-emerald-100 px-1.5 py-0.5 text-emerald-900">{p}</span>
+          {/each}
           {#if t.status === 'planned'}<span
               class="rounded bg-purple-100 px-1.5 py-0.5 text-purple-900">planned</span
             >{/if}

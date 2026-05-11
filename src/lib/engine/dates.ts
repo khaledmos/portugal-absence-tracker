@@ -7,9 +7,17 @@ export function daysBetween(start: ISODate, end: ISODate): number {
   return differenceInCalendarDays(parseISO(end), parseISO(start)) + 1;
 }
 
-export function absentDaysFor(trip: Trip, convention: DaycountConvention): ISODate[] {
-  const dep = parseISO(trip.departureDate);
-  const ret = parseISO(trip.returnDate);
+/**
+ * Compute the set of "absent" ISO dates between a departure and return,
+ * applying the user's day-counting convention.
+ */
+export function absentDaysForInterval(
+  startDate: ISODate,
+  endDate: ISODate,
+  convention: DaycountConvention
+): ISODate[] {
+  const dep = parseISO(startDate);
+  const ret = parseISO(endDate);
 
   let start: Date;
   let end: Date;
@@ -33,16 +41,39 @@ export function absentDaysFor(trip: Trip, convention: DaycountConvention): ISODa
   return eachDayOfInterval({ start, end }).map(fmt);
 }
 
+/**
+ * Clip a trip's Portugal interval (always) and Schengen interval (if present)
+ * to the supplied window. Returns null if the Portugal interval is entirely
+ * outside the window. The Schengen sub-interval, if clipped to empty, is
+ * dropped (set to undefined) on the returned Trip.
+ */
 export function clipTrip(trip: Trip, windowStart: ISODate, windowEnd: ISODate): Trip | null {
   const ws = parseISO(windowStart);
   const we = parseISO(windowEnd);
-  const dep = parseISO(trip.departureDate);
-  const ret = parseISO(trip.returnDate);
+  const ptExit = parseISO(trip.portugalExitDate);
+  const ptReturn = parseISO(trip.portugalReturnDate);
 
-  if (ret.getTime() < ws.getTime() || dep.getTime() > we.getTime()) return null;
+  if (ptReturn.getTime() < ws.getTime() || ptExit.getTime() > we.getTime()) return null;
 
-  const clippedDep = max([dep, ws]);
-  const clippedRet = min([ret, we]);
+  const clippedPtExit = fmt(max([ptExit, ws]));
+  const clippedPtReturn = fmt(min([ptReturn, we]));
 
-  return { ...trip, departureDate: fmt(clippedDep), returnDate: fmt(clippedRet) };
+  let clippedSchExit: ISODate | undefined;
+  let clippedSchReturn: ISODate | undefined;
+  if (trip.schengenExitDate && trip.schengenReturnDate) {
+    const schExit = parseISO(trip.schengenExitDate);
+    const schReturn = parseISO(trip.schengenReturnDate);
+    if (schReturn.getTime() >= ws.getTime() && schExit.getTime() <= we.getTime()) {
+      clippedSchExit = fmt(max([schExit, ws]));
+      clippedSchReturn = fmt(min([schReturn, we]));
+    }
+  }
+
+  return {
+    ...trip,
+    portugalExitDate: clippedPtExit,
+    portugalReturnDate: clippedPtReturn,
+    schengenExitDate: clippedSchExit,
+    schengenReturnDate: clippedSchReturn
+  };
 }

@@ -18,14 +18,14 @@
   <h3 class="mb-2 text-sm font-semibold">Card timeline</h3>
   <div class="relative h-7 rounded bg-neutral-100 dark:bg-neutral-800">
     {#each trips as t (t.id)}
-      {@const left = pct(t.departureDate)}
-      {@const width = Math.max(0.5, pct(t.returnDate) - left)}
+      {@const left = pct(t.portugalExitDate)}
+      {@const width = Math.max(0.5, pct(t.portugalReturnDate) - left)}
       <div
         class="absolute top-1 h-5 rounded-sm {t.status === 'past'
           ? 'bg-blue-600'
           : 'border border-dashed border-blue-700 bg-blue-300'}"
         style="left: {left}%; width: {width}%"
-        title="{t.departureDate} → {t.returnDate}"
+        title="{t.portugalExitDate} → {t.portugalReturnDate}"
       ></div>
     {/each}
     <div class="absolute -top-0.5 -bottom-0.5 w-0.5 bg-red-500" style="left: {pct(today)}%"></div>

@@ -23,8 +23,8 @@ test('first run flow: accept disclaimer, add card, add trip, see dashboard', asy
   // Add a UK trip.
   await page.goto('/trips/');
   await page.getByRole('button', { name: '+ Add trip' }).click();
-  await page.getByLabel('Departure').fill('2025-11-04');
-  await page.getByLabel('Return').fill('2025-11-12');
+  await page.getByLabel('Left Portugal').fill('2025-11-04');
+  await page.getByLabel('Returned to Portugal').fill('2025-11-12');
   await page.getByRole('button', { name: 'Pick a country' }).click();
   await page.getByPlaceholder('Search countries…').fill('United Kingdom');
   await page.getByRole('button', { name: /United Kingdom/ }).click();

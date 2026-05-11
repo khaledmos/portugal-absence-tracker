@@ -17,7 +17,7 @@ export async function autoFlipOverdue(
   const overdue = await r.trips.list();
   let count = 0;
   for (const t of overdue) {
-    if (t.status === 'planned' && t.returnDate <= cutoff) {
+    if (t.status === 'planned' && t.portugalReturnDate <= cutoff) {
       await r.trips.put({ ...t, status: 'past', needsReview: true });
       count++;
     }

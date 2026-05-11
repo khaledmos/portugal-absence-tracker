@@ -66,9 +66,9 @@ describe('TripRepo', () => {
   it('creates, lists, and deletes trips', async () => {
     const t: Trip = {
       id: 't1',
-      departureDate: '2026-01-10',
-      returnDate: '2026-01-15',
-      destinationCountry: 'GB',
+      portugalExitDate: '2026-01-10',
+      portugalReturnDate: '2026-01-15',
+      primaryDestinationCountry: 'GB',
       status: 'past'
     };
     await repos.trips.put(t);
@@ -80,16 +80,16 @@ describe('TripRepo', () => {
   it('lists planned trips with past return dates', async () => {
     const overdue: Trip = {
       id: 'o',
-      departureDate: '2026-04-01',
-      returnDate: '2026-04-10',
-      destinationCountry: 'GB',
+      portugalExitDate: '2026-04-01',
+      portugalReturnDate: '2026-04-10',
+      primaryDestinationCountry: 'GB',
       status: 'planned'
     };
     const future: Trip = {
       id: 'f',
-      departureDate: '2026-12-01',
-      returnDate: '2026-12-10',
-      destinationCountry: 'GB',
+      portugalExitDate: '2026-12-01',
+      portugalReturnDate: '2026-12-10',
+      primaryDestinationCountry: 'GB',
       status: 'planned'
     };
     await repos.trips.put(overdue);
@@ -110,5 +110,46 @@ describe('SettingsRepo', () => {
     await repos.settings.update({ daycountConvention: 'inclusive_both' });
     const s = await repos.settings.get();
     expect(s.daycountConvention).toBe('inclusive_both');
+  });
+});
+
+describe('Dexie v1 → v2 upgrade', () => {
+  it('migrates an existing v1 database in place', async () => {
+    const dbName = 'upgrade-test-' + Math.random().toString(36).slice(2);
+
+    // Step 1: open the v1 schema and insert a v1-shaped trip
+    const Dexie = (await import('dexie')).default;
+    const v1Db = new Dexie(dbName);
+    v1Db.version(1).stores({
+      cards: 'id, issuedDate, expiryDate, archived',
+      trips: 'id, departureDate, returnDate, status, destinationCountry',
+      settings: 'id'
+    });
+    await v1Db.open();
+    await v1Db.table('trips').put({
+      id: 'legacy-1',
+      departureDate: '2025-11-04',
+      returnDate: '2025-11-12',
+      destinationCountry: 'GB',
+      destinationCity: 'London',
+      departureAirport: 'LIS',
+      arrivalAirport: 'LHR',
+      status: 'past',
+      purpose: 'cultural'
+    });
+    v1Db.close();
+
+    // Step 2: reopen with v2 schema — upgrade runs
+    const v2Db = new TrackerDB(dbName);
+    await v2Db.open();
+    const migrated = await v2Db.trips.get('legacy-1');
+    expect(migrated).toBeTruthy();
+    expect(migrated?.portugalExitDate).toBe('2025-11-04');
+    expect(migrated?.portugalReturnDate).toBe('2025-11-12');
+    expect(migrated?.primaryDestinationCountry).toBe('GB');
+    expect(migrated?.purposes).toEqual(['tourism']);
+    expect(migrated?.notes).toBe('City: London. From: LIS. To: LHR.');
+    expect((migrated as unknown as Record<string, unknown>).departureDate).toBeUndefined();
+    v2Db.close();
   });
 });

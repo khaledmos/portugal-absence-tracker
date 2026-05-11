@@ -11,20 +11,22 @@
     data.cards.find((c) => c.issuedDate <= today && today <= c.expiryDate)
   );
 
-  let departureDate = $state('');
-  let returnDate = $state('');
-  let destinationCountry = $state('');
+  let portugalExitDate = $state('');
+  let portugalReturnDate = $state('');
+  let primaryDestinationCountry = $state('');
 
   const draft: Trip = $derived({
     id: '__sim__',
-    departureDate,
-    returnDate,
-    destinationCountry,
-    status: 'planned'
+    status: 'planned',
+    portugalExitDate,
+    portugalReturnDate,
+    primaryDestinationCountry
   });
 
   const result = $derived.by(() => {
-    if (!activeCard || !departureDate || !returnDate || !destinationCountry) return null;
+    if (!activeCard || !portugalExitDate || !portugalReturnDate || !primaryDestinationCountry) {
+      return null;
+    }
     const before = computeCardCompliance({
       card: activeCard,
       trips: data.trips,
@@ -49,10 +51,10 @@
   );
 
   async function saveAsPlanned() {
-    if (!destinationCountry) return;
+    if (!primaryDestinationCountry) return;
     const trip: Trip = { ...draft, id: uuid() };
     await data.upsertTrip(trip);
-    departureDate = returnDate = destinationCountry = '';
+    portugalExitDate = portugalReturnDate = primaryDestinationCountry = '';
   }
 </script>
 
@@ -64,27 +66,31 @@
   <div class="space-y-3 rounded-xl border bg-white p-4 dark:bg-neutral-900">
     <div class="grid grid-cols-2 gap-2">
       <label class="block text-sm"
-        >Departure
+        >Left Portugal
         <input
           type="date"
           class="mt-1 w-full rounded border px-2 py-1"
-          bind:value={departureDate}
+          bind:value={portugalExitDate}
         />
       </label>
       <label class="block text-sm"
-        >Return
-        <input type="date" class="mt-1 w-full rounded border px-2 py-1" bind:value={returnDate} />
+        >Returned to Portugal
+        <input
+          type="date"
+          class="mt-1 w-full rounded border px-2 py-1"
+          bind:value={portugalReturnDate}
+        />
       </label>
     </div>
     <div class="text-sm">
-      <div class="mb-1">Destination</div>
-      <CountryPicker bind:value={destinationCountry} />
+      <div class="mb-1">Primary destination country</div>
+      <CountryPicker bind:value={primaryDestinationCountry} />
     </div>
-    {#if destinationCountry}
+    {#if primaryDestinationCountry}
       <div class="text-xs">
-        {isSchengen(destinationCountry)
+        {isSchengen(primaryDestinationCountry)
           ? 'Inside Schengen — counts toward Portugal only'
-          : 'Outside Schengen — counts toward both'}
+          : 'Outside Schengen — counts toward both Portugal and Schengen'}
       </div>
     {/if}
   </div>

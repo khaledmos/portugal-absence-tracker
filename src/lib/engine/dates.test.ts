@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { absentDaysFor, clipTrip, daysBetween } from './dates';
+import { absentDaysForInterval, clipTrip, daysBetween } from './dates';
 import type { Trip } from '../domain/types';
 
 const trip = (over: Partial<Trip> = {}): Trip => ({
   id: 't1',
-  departureDate: '2026-01-15',
-  returnDate: '2026-01-18',
-  destinationCountry: 'GB',
+  portugalExitDate: '2026-01-15',
+  portugalReturnDate: '2026-01-18',
+  primaryDestinationCountry: 'GB',
   status: 'past',
   ...over
 });
@@ -18,66 +18,86 @@ describe('daysBetween', () => {
   });
 });
 
-describe('absentDaysFor (standard convention)', () => {
-  it('returns dates from departure to day before return', () => {
-    const days = absentDaysFor(trip(), 'standard');
+describe('absentDaysForInterval (standard convention)', () => {
+  it('returns dates from start to day before end', () => {
+    const days = absentDaysForInterval('2026-01-15', '2026-01-18', 'standard');
     expect(days).toEqual(['2026-01-15', '2026-01-16', '2026-01-17']);
   });
 
-  it('returns empty for same-day trip under standard', () => {
-    const days = absentDaysFor(
-      trip({ departureDate: '2026-01-15', returnDate: '2026-01-15' }),
-      'standard'
-    );
+  it('returns empty for same-day intervals under standard', () => {
+    const days = absentDaysForInterval('2026-01-15', '2026-01-15', 'standard');
     expect(days).toEqual([]);
   });
 });
 
-describe('absentDaysFor (inclusive_both convention)', () => {
-  it('includes both departure and return days', () => {
-    const days = absentDaysFor(trip(), 'inclusive_both');
+describe('absentDaysForInterval (inclusive_both convention)', () => {
+  it('includes both end days', () => {
+    const days = absentDaysForInterval('2026-01-15', '2026-01-18', 'inclusive_both');
     expect(days).toEqual(['2026-01-15', '2026-01-16', '2026-01-17', '2026-01-18']);
   });
 });
 
-describe('absentDaysFor (exclusive_both convention)', () => {
-  it('excludes both departure and return days', () => {
-    const days = absentDaysFor(trip(), 'exclusive_both');
+describe('absentDaysForInterval (exclusive_both convention)', () => {
+  it('excludes both end days', () => {
+    const days = absentDaysForInterval('2026-01-15', '2026-01-18', 'exclusive_both');
     expect(days).toEqual(['2026-01-16', '2026-01-17']);
   });
 
   it('returns empty for short trips under exclusive', () => {
-    const days = absentDaysFor(
-      trip({ departureDate: '2026-01-15', returnDate: '2026-01-16' }),
-      'exclusive_both'
-    );
+    const days = absentDaysForInterval('2026-01-15', '2026-01-16', 'exclusive_both');
     expect(days).toEqual([]);
   });
 });
 
 describe('clipTrip', () => {
   it('returns the trip unchanged when entirely within window', () => {
-    const t = trip({ departureDate: '2026-02-01', returnDate: '2026-02-10' });
+    const t = trip({ portugalExitDate: '2026-02-01', portugalReturnDate: '2026-02-10' });
     const clipped = clipTrip(t, '2026-01-01', '2026-12-31');
     expect(clipped).toEqual(t);
   });
 
-  it('clips departure to window start', () => {
-    const t = trip({ departureDate: '2025-12-20', returnDate: '2026-01-10' });
+  it('clips Portugal exit to window start', () => {
+    const t = trip({ portugalExitDate: '2025-12-20', portugalReturnDate: '2026-01-10' });
     const clipped = clipTrip(t, '2026-01-01', '2026-12-31');
-    expect(clipped?.departureDate).toBe('2026-01-01');
-    expect(clipped?.returnDate).toBe('2026-01-10');
+    expect(clipped?.portugalExitDate).toBe('2026-01-01');
+    expect(clipped?.portugalReturnDate).toBe('2026-01-10');
   });
 
-  it('clips return to window end', () => {
-    const t = trip({ departureDate: '2026-12-25', returnDate: '2027-01-05' });
+  it('clips Portugal return to window end', () => {
+    const t = trip({ portugalExitDate: '2026-12-25', portugalReturnDate: '2027-01-05' });
     const clipped = clipTrip(t, '2026-01-01', '2026-12-31');
-    expect(clipped?.departureDate).toBe('2026-12-25');
-    expect(clipped?.returnDate).toBe('2026-12-31');
+    expect(clipped?.portugalExitDate).toBe('2026-12-25');
+    expect(clipped?.portugalReturnDate).toBe('2026-12-31');
   });
 
   it('returns null when trip is entirely outside the window', () => {
-    const t = trip({ departureDate: '2027-01-01', returnDate: '2027-01-10' });
+    const t = trip({ portugalExitDate: '2027-01-01', portugalReturnDate: '2027-01-10' });
     expect(clipTrip(t, '2026-01-01', '2026-12-31')).toBeNull();
+  });
+
+  it('clips Schengen sub-interval together with Portugal interval', () => {
+    const t = trip({
+      portugalExitDate: '2025-12-20',
+      portugalReturnDate: '2026-01-15',
+      schengenExitDate: '2025-12-22',
+      schengenReturnDate: '2026-01-12'
+    });
+    const clipped = clipTrip(t, '2026-01-01', '2026-12-31');
+    expect(clipped?.portugalExitDate).toBe('2026-01-01');
+    expect(clipped?.schengenExitDate).toBe('2026-01-01');
+    expect(clipped?.schengenReturnDate).toBe('2026-01-12');
+  });
+
+  it('drops Schengen sub-interval when fully outside window', () => {
+    const t = trip({
+      portugalExitDate: '2025-12-01',
+      portugalReturnDate: '2026-02-10',
+      schengenExitDate: '2025-12-05',
+      schengenReturnDate: '2025-12-29'
+    });
+    const clipped = clipTrip(t, '2026-01-01', '2026-12-31');
+    expect(clipped?.portugalExitDate).toBe('2026-01-01');
+    expect(clipped?.schengenExitDate).toBeUndefined();
+    expect(clipped?.schengenReturnDate).toBeUndefined();
   });
 });
