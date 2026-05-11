@@ -35,4 +35,12 @@
     <span>today</span>
     <span>{card.expiryDate}</span>
   </div>
+  <div class="mt-2 flex items-center gap-3 text-[10px] text-neutral-500">
+    <span class="flex items-center gap-1">
+      <span class="inline-block h-2 w-3 rounded-sm bg-blue-600"></span> Trips outside Portugal
+    </span>
+    <span class="flex items-center gap-1">
+      <span class="inline-block h-3 w-0.5 bg-red-500"></span> Today
+    </span>
+  </div>
 </div>

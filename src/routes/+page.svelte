@@ -20,6 +20,12 @@
       : null
   );
   let view = $state<'today' | 'projected'>('today');
+
+  const elapsedPct = $derived(
+    compliance
+      ? Math.min(100, Math.round((compliance.elapsedDays / compliance.validityDays) * 100))
+      : 0
+  );
 </script>
 
 {#if !data.loaded}
@@ -34,14 +40,13 @@
     <div class="text-xs uppercase opacity-60">Active card</div>
     <div class="font-semibold">{activeCard.label}</div>
     <div class="mt-0.5 text-xs opacity-75">
-      {activeCard.issuedDate} → {activeCard.expiryDate} · {compliance.elapsedDays} / {compliance.validityDays}
-      days
+      {activeCard.issuedDate} → {activeCard.expiryDate}
+    </div>
+    <div class="mt-0.5 text-xs opacity-75">
+      {compliance.elapsedDays} / {compliance.validityDays} days elapsed · {elapsedPct}%
     </div>
     <div class="mt-2 h-1.5 overflow-hidden rounded bg-white/20">
-      <div
-        class="h-full bg-emerald-300"
-        style="width: {Math.min(100, (compliance.elapsedDays / compliance.validityDays) * 100)}%"
-      ></div>
+      <div class="h-full bg-emerald-300" style="width: {elapsedPct}%"></div>
     </div>
   </header>
 
@@ -56,20 +61,23 @@
     </div>
   {/if}
 
-  <div class="mb-3 flex gap-1 rounded-lg bg-neutral-100 p-1 text-sm dark:bg-neutral-800">
+  <div class="mb-1 flex gap-1 rounded-lg bg-neutral-100 p-1 text-sm dark:bg-neutral-800">
     <button
       class="flex-1 rounded py-1 {view === 'today' ? 'bg-black text-white' : ''}"
-      onclick={() => (view = 'today')}>As of today</button
+      onclick={() => (view = 'today')}>Current count</button
     >
     <button
       class="flex-1 rounded py-1 {view === 'projected' ? 'bg-black text-white' : ''}"
-      onclick={() => (view = 'projected')}>Projected (incl. planned)</button
+      onclick={() => (view = 'projected')}>Including planned trips</button
     >
   </div>
+  <p class="mb-3 text-xs text-neutral-500">
+    Current count excludes planned trips. Projected count includes planned trips.
+  </p>
 
   <div class="mb-4 grid grid-cols-2 gap-3">
     <AbsenceTile
-      label="Portugal absence"
+      label="Days outside Portugal"
       used={view === 'today'
         ? compliance.portugal.interpolated.used
         : compliance.portugal.projectedAfterPlanned.interpolatedUsed}
@@ -77,7 +85,7 @@
       sub={compliance.portugal.interpolated.budgetMonthsLabel}
     />
     <AbsenceTile
-      label="Schengen absence"
+      label="Days outside the Schengen Area"
       used={view === 'today'
         ? compliance.schengen.interpolated.used
         : compliance.schengen.projectedAfterPlanned.interpolatedUsed}
@@ -87,8 +95,11 @@
   </div>
 
   <div class="mb-4 rounded-xl border p-4">
-    <div class="text-xs text-neutral-500">Longest consecutive absence</div>
-    <div class="mt-1 font-semibold">
+    <div class="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+      Longest single absence
+    </div>
+    <p class="mt-0.5 text-xs text-neutral-500">Your longest continuous time away from Portugal.</p>
+    <div class="mt-2 font-semibold">
       {compliance.portugal.consecutive.used} d
       <span class="text-sm text-neutral-500"
         >/ {compliance.portugal.consecutive.budgetMonths}-month limit</span
