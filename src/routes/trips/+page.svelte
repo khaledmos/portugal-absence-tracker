@@ -59,6 +59,7 @@
   {#each filtered as t (t.id)}
     {@const current = isCurrent(t)}
     {@const sch = isSchengen(t.primaryDestinationCountry)}
+    {@const extra = t.otherCountriesVisited ?? []}
     <li
       class="rounded-xl border p-3 {current
         ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/30'
@@ -66,10 +67,10 @@
     >
       <button class="w-full text-left" onclick={() => (editing = t)}>
         <div class="flex justify-between">
-          <span class="font-semibold"
-            >{countryFlag(t.primaryDestinationCountry)}
-            {countryName(t.primaryDestinationCountry)}</span
-          >
+          <span class="font-semibold">
+            {countryFlag(t.primaryDestinationCountry)}
+            {countryName(t.primaryDestinationCountry)}{extra.length > 0 ? ` +${extra.length}` : ''}
+          </span>
           <span class="text-sm font-semibold"
             >{daysBetween(t.portugalExitDate, t.portugalReturnDate) - 1} d</span
           >
@@ -77,6 +78,11 @@
         <div class="text-xs text-neutral-500">
           {t.portugalExitDate} → {t.portugalReturnDate}
         </div>
+        {#if extra.length > 0}
+          <div class="mt-1 text-xs text-neutral-600 dark:text-neutral-300">
+            Visited: {extra.map((c) => `${countryFlag(c)} ${countryName(c)}`).join(', ')}
+          </div>
+        {/if}
         <div class="mt-1 flex flex-wrap gap-1 text-xs">
           <span
             class="rounded px-1.5 py-0.5 {sch
