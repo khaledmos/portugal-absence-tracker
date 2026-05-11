@@ -79,4 +79,39 @@ describe('importFromJSON', () => {
     const payload = JSON.stringify({ schemaVersion: 999, cards: [], trips: [], settings: {} });
     await expect(importFromJSON(repos, payload)).rejects.toThrow(/schema version/i);
   });
+
+  it('upgrades a v1 trip payload to v2 schema on import', async () => {
+    const v1Payload = {
+      schemaVersion: 1,
+      exportedAt: '2026-05-11T12:00:00Z',
+      cards: [
+        {
+          id: 'c1',
+          label: '2nd card',
+          type: 'subsequent_3yr',
+          issuedDate: '2025-08-01',
+          expiryDate: '2028-01-31'
+        }
+      ],
+      trips: [
+        {
+          id: 't1',
+          departureDate: '2025-11-04',
+          returnDate: '2025-11-12',
+          destinationCountry: 'GB',
+          destinationCity: 'London',
+          status: 'past',
+          purpose: 'business'
+        }
+      ],
+      settings: { daycountConvention: 'standard', defaultScopeView: 'both' }
+    };
+    await importFromJSON(repos, JSON.stringify(v1Payload));
+    const trips = await repos.trips.list();
+    expect(trips).toHaveLength(1);
+    expect(trips[0].portugalExitDate).toBe('2025-11-04');
+    expect(trips[0].primaryDestinationCountry).toBe('GB');
+    expect(trips[0].purposes).toEqual(['business']);
+    expect(trips[0].notes).toBe('City: London.');
+  });
 });
