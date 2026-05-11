@@ -190,3 +190,89 @@ describe('computeCardCompliance — permanent_5yr', () => {
     expect(r.portugal.interpolated.used).toBeLessThan(1200);
   });
 });
+
+describe('computeCardCompliance — two-interval Schengen', () => {
+  it('uses explicit Schengen dates when both are set (Madrid-transit case)', () => {
+    // Left Portugal Mon 2026-05-04, transited via Madrid one day,
+    // exited Schengen Tue 2026-05-05 to Istanbul, returned via Madrid
+    // and back to Portugal Sun 2026-05-17. Schengen out 12 days; Portugal out 13.
+    const t: Trip = {
+      id: 't-madrid',
+      portugalExitDate: '2026-05-04',
+      portugalReturnDate: '2026-05-17',
+      schengenExitDate: '2026-05-05',
+      schengenReturnDate: '2026-05-17',
+      primaryDestinationCountry: 'TR',
+      status: 'past'
+    };
+    const r = computeCardCompliance({ card, trips: [t], today: '2026-06-01', settings });
+    expect(r.portugal.interpolated.used).toBe(13);
+    expect(r.schengen.interpolated.used).toBe(12);
+  });
+
+  it('defaults Schengen interval to Portugal interval when no explicit dates given', () => {
+    const t: Trip = {
+      id: 't-direct',
+      portugalExitDate: '2026-05-04',
+      portugalReturnDate: '2026-05-14',
+      primaryDestinationCountry: 'TR',
+      status: 'past'
+    };
+    const r = computeCardCompliance({ card, trips: [t], today: '2026-06-01', settings });
+    expect(r.portugal.interpolated.used).toBe(10);
+    expect(r.schengen.interpolated.used).toBe(10);
+  });
+
+  it('contributes zero Schengen days for trips whose primary destination is in Schengen', () => {
+    const t: Trip = {
+      id: 't-paris',
+      portugalExitDate: '2026-05-04',
+      portugalReturnDate: '2026-05-08',
+      primaryDestinationCountry: 'FR',
+      status: 'past'
+    };
+    const r = computeCardCompliance({ card, trips: [t], today: '2026-06-01', settings });
+    expect(r.portugal.interpolated.used).toBe(4);
+    expect(r.schengen.interpolated.used).toBe(0);
+  });
+
+  it('ignores otherCountriesVisited entirely (calculation depends only on dates)', () => {
+    const without: Trip = {
+      id: 't-without',
+      portugalExitDate: '2026-05-04',
+      portugalReturnDate: '2026-05-14',
+      primaryDestinationCountry: 'TR',
+      status: 'past'
+    };
+    const withList: Trip = {
+      ...without,
+      id: 't-with',
+      otherCountriesVisited: ['EG', 'MA']
+    };
+    const r1 = computeCardCompliance({ card, trips: [without], today: '2026-06-01', settings });
+    const r2 = computeCardCompliance({
+      card,
+      trips: [withList],
+      today: '2026-06-01',
+      settings
+    });
+    expect(r1.portugal.interpolated.used).toBe(r2.portugal.interpolated.used);
+    expect(r1.schengen.interpolated.used).toBe(r2.schengen.interpolated.used);
+  });
+
+  it('reports Portugal-abroad but not Schengen-abroad when currently in a Schengen transit country', () => {
+    // User is in Madrid today (en route to Istanbul tomorrow).
+    const t: Trip = {
+      id: 't-transit-now',
+      portugalExitDate: '2026-05-09',
+      portugalReturnDate: '2026-05-20',
+      schengenExitDate: '2026-05-11', // not yet — today is 2026-05-10
+      schengenReturnDate: '2026-05-20',
+      primaryDestinationCountry: 'TR',
+      status: 'past'
+    };
+    const r = computeCardCompliance({ card, trips: [t], today: '2026-05-10', settings });
+    expect(r.portugal.consecutive.currentlyAbroad).toBe(true);
+    expect(r.schengen.consecutive.currentlyAbroad).toBe(false);
+  });
+});
