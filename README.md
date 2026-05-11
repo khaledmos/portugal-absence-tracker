@@ -24,8 +24,18 @@ static host. No server, no environment variables.
 
 ## Spec & plan
 
+### v1 — initial implementation (2026-05-11)
+
 - [Design spec](docs/superpowers/specs/2026-05-10-portugal-residence-tracker-design.md)
 - [Implementation plan](docs/superpowers/plans/2026-05-10-portugal-residence-tracker.md)
+
+### v1.1 — Trip model redesign (2026-05-12)
+
+- [Redesign spec](docs/superpowers/specs/2026-05-12-trip-model-redesign-design.md)
+- [Redesign plan](docs/superpowers/plans/2026-05-12-trip-model-redesign.md)
+
+v1.1 introduces two-interval absences (Portugal + Schengen), multi-country trips,
+multi-select purposes, and a simpler form. Existing v1 data migrates losslessly.
 
 ## Disclaimer
 
