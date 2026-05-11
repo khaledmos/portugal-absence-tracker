@@ -1,42 +1,33 @@
-# sv
+# Portugal Residence Tracker
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A privacy-first PWA for foreign residents of Portugal to track absence days against the Article 85
+limits of Lei n.º 23/2007. All data stays on your device.
 
-## Creating a project
+## Stack
 
-If you're seeing this, you've probably already done this step. Congrats!
+SvelteKit · Svelte 5 runes · TypeScript · Tailwind v4 · Dexie 4 · date-fns · Vitest · Playwright.
 
-```sh
-# create a new project
-npx sv create my-app
+## Develop
+
+```bash
+npm install
+npm run dev          # http://localhost:5173
+npm run test         # unit + repository tests
+npm run test:e2e     # Playwright golden path
+npm run build        # static build → ./build
 ```
 
-To recreate this project with the same configuration:
+## Deploy
 
-```sh
-# recreate this project
-npx sv@0.15.3 create --template minimal --types ts --no-install .
-```
+The build is fully static. Drag-and-drop `build/` to Cloudflare Pages, Netlify, Vercel, or any
+static host. No server, no environment variables.
 
-## Developing
+## Spec & plan
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+- [Design spec](docs/superpowers/specs/2026-05-10-portugal-residence-tracker-design.md)
+- [Implementation plan](docs/superpowers/plans/2026-05-10-portugal-residence-tracker.md)
 
-```sh
-npm run dev
+## Disclaimer
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+Not legal advice. Consult AIMA or a licensed Portuguese immigration attorney for decisions
+affecting your residency status.
