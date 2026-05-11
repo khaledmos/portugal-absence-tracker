@@ -15,8 +15,9 @@
   <div class="mt-2 text-2xl font-bold">
     {used}<span class="text-sm font-medium text-neutral-500"> / {budget} days used</span>
   </div>
-  <div class="mt-1 text-xs text-neutral-600 dark:text-neutral-400">{pct}% of limit used</div>
-  <div class="text-xs text-neutral-600 dark:text-neutral-400">{remaining} days remaining</div>
+  <div class="mt-1 text-xs text-neutral-600 dark:text-neutral-400">
+    {pct}% used · {remaining} days remaining
+  </div>
   <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-800">
     <div class="h-full {barColor}" style="width: {pct}%"></div>
   </div>

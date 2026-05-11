@@ -33,8 +33,8 @@ test('first run flow: accept disclaimer, add card, add trip, see dashboard', asy
 
   // Dashboard shows the absence numbers.
   await page.goto('/');
-  await expect(page.getByText('Days outside Portugal')).toBeVisible();
-  await expect(page.getByText('Days outside the Schengen Area')).toBeVisible();
+  await expect(page.getByText('Outside Portugal', { exact: true })).toBeVisible();
+  await expect(page.getByText('Outside Schengen', { exact: true })).toBeVisible();
   // Two tiles each show "/ 244 days used" against the 8-month interpolated budget.
   await expect(page.getByText('/ 244 days used').first()).toBeVisible();
 });

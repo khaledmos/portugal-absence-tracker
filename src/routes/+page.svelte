@@ -71,13 +71,11 @@
       onclick={() => (view = 'projected')}>Including planned trips</button
     >
   </div>
-  <p class="mb-3 text-xs text-neutral-500">
-    Current count excludes planned trips. Projected count includes planned trips.
-  </p>
+  <p class="mb-3 text-xs text-neutral-500">Planned trips are only included in projected view.</p>
 
   <div class="mb-4 grid grid-cols-2 gap-3">
     <AbsenceTile
-      label="Days outside Portugal"
+      label="Outside Portugal"
       used={view === 'today'
         ? compliance.portugal.interpolated.used
         : compliance.portugal.projectedAfterPlanned.interpolatedUsed}
@@ -85,7 +83,7 @@
       sub={compliance.portugal.interpolated.budgetMonthsLabel}
     />
     <AbsenceTile
-      label="Days outside the Schengen Area"
+      label="Outside Schengen"
       used={view === 'today'
         ? compliance.schengen.interpolated.used
         : compliance.schengen.projectedAfterPlanned.interpolatedUsed}
@@ -98,7 +96,6 @@
     <div class="text-sm font-medium text-neutral-700 dark:text-neutral-300">
       Longest single absence
     </div>
-    <p class="mt-0.5 text-xs text-neutral-500">Your longest continuous time away from Portugal.</p>
     <div class="mt-2 font-semibold">
       {compliance.portugal.consecutive.used} d
       <span class="text-sm text-neutral-500"
