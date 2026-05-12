@@ -3,10 +3,12 @@ import { test, expect } from '@playwright/test';
 test('Madrid-transit trip produces distinct Portugal and Schengen absence', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'I understand' }).click();
+  // Wait for the disclaimer modal to fully dismiss before navigating.
+  await expect(page.getByText('Before you start')).not.toBeVisible();
 
   // Card
   await page.goto('/cards/');
-  await page.getByRole('button', { name: '+ Add card' }).click();
+  await page.getByRole('button', { name: 'Add card' }).click();
   await page.getByLabel('Label').fill('2nd card');
   await page.getByLabel('Permit type').selectOption('subsequent_3yr');
   await page.getByLabel('Issued').fill('2025-08-01');
@@ -18,7 +20,7 @@ test('Madrid-transit trip produces distinct Portugal and Schengen absence', asyn
   //   Left Portugal Mon 2026-05-04, transited via Madrid one day,
   //   Schengen exit Tue 2026-05-05 → Istanbul → back via Madrid → returned to Portugal Sun 2026-05-17
   await page.goto('/trips/');
-  await page.getByRole('button', { name: '+ Add trip' }).click();
+  await page.getByRole('button', { name: 'Add trip' }).click();
   await page.getByLabel('Left Portugal').fill('2026-05-04');
   await page.getByLabel('Returned to Portugal').fill('2026-05-17');
 
@@ -44,11 +46,17 @@ test('Madrid-transit trip produces distinct Portugal and Schengen absence', asyn
   await expect(page.getByText('Outside Schengen', { exact: true })).toBeVisible();
 
   // Portugal absence = 13 d, Schengen absence = 12 d.
-  // innerText collapses to "13/ 244 days used" / "12/ 244 days used".
-  await expect(
-    page.locator('div.rounded-xl').filter({ hasText: '13/ 244 days used' })
-  ).toContainText('Outside Portugal');
-  await expect(
-    page.locator('div.rounded-xl').filter({ hasText: '12/ 244 days used' })
-  ).toContainText('Outside Schengen');
+  // The AbsenceTile card contains both "Outside Portugal" + "days used"; the
+  // Timeline legend only has "Trips outside Portugal" without "days used".
+  const portugalTile = page
+    .locator('.card')
+    .filter({ hasText: 'Outside Portugal' })
+    .filter({ hasText: 'days used' });
+  await expect(portugalTile).toContainText('13');
+
+  const schengenTile = page
+    .locator('.card')
+    .filter({ hasText: 'Outside Schengen' })
+    .filter({ hasText: 'days used' });
+  await expect(schengenTile).toContainText('12');
 });

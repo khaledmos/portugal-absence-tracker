@@ -36,20 +36,35 @@
 <div class="relative">
   <button
     type="button"
-    class="w-full rounded-lg border bg-white px-3 py-2 text-left dark:bg-neutral-800"
+    class="input flex w-full items-center justify-between text-left"
     onclick={() => (open = !open)}
   >
-    {current ? `${current.flag} ${current.name}` : 'Pick a country'}
+    <span class={current ? '' : 'text-neutral-400'}>
+      {current ? `${current.flag} ${current.name}` : 'Pick a country'}
+    </span>
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="h-4 w-4 text-neutral-400"
+      aria-hidden="true"
+    >
+      <path d="M6 9l6 6 6-6" />
+    </svg>
   </button>
   {#if open}
     <div
-      class="absolute inset-x-0 z-10 mt-1 max-h-64 overflow-auto rounded-lg border bg-white shadow-lg dark:bg-neutral-900"
+      class="absolute inset-x-0 z-10 mt-1.5 max-h-64 overflow-auto rounded-xl bg-white shadow-lg"
+      style="box-shadow: var(--shadow-card-elev);"
     >
       <!-- svelte-ignore a11y_autofocus -->
       <input
         bind:value={query}
         {placeholder}
-        class="w-full border-b bg-transparent px-3 py-2"
+        class="w-full border-b border-neutral-200 bg-transparent px-3 py-2.5 text-sm focus:outline-none"
         autofocus
       />
       <ul>
@@ -57,11 +72,11 @@
           <li>
             <button
               type="button"
-              class="flex w-full justify-between px-3 py-2 text-left hover:bg-neutral-100 dark:hover:bg-neutral-800"
+              class="flex w-full justify-between px-3 py-2.5 text-left text-sm hover:bg-neutral-50"
               onclick={() => pick(c.code)}
             >
               <span>{c.flag} {c.name}</span>
-              <span class="text-xs text-neutral-500">
+              <span class="text-xs text-neutral-400">
                 {c.isSchengen ? 'Schengen' : 'Outside Schengen'}
               </span>
             </button>

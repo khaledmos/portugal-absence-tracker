@@ -12,7 +12,7 @@ test('first run flow: accept disclaimer, add card, add trip, see dashboard', asy
 
   // Add a card.
   await page.goto('/cards/');
-  await page.getByRole('button', { name: '+ Add card' }).click();
+  await page.getByRole('button', { name: 'Add card' }).click();
   await page.getByLabel('Label').fill('2nd card');
   await page.getByLabel('Permit type').selectOption('subsequent_3yr');
   await page.getByLabel('Issued').fill('2025-08-01');
@@ -22,7 +22,7 @@ test('first run flow: accept disclaimer, add card, add trip, see dashboard', asy
 
   // Add a UK trip.
   await page.goto('/trips/');
-  await page.getByRole('button', { name: '+ Add trip' }).click();
+  await page.getByRole('button', { name: 'Add trip' }).click();
   await page.getByLabel('Left Portugal').fill('2025-11-04');
   await page.getByLabel('Returned to Portugal').fill('2025-11-12');
   await page.getByRole('button', { name: 'Pick a country' }).click();

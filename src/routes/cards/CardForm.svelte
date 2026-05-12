@@ -34,50 +34,44 @@
   }
 </script>
 
-<div class="space-y-3 rounded-xl border bg-white p-4 dark:bg-neutral-900">
-  <h3 class="font-semibold">{initial ? 'Edit' : 'New'} card</h3>
+<div class="card space-y-4">
+  <h3 class="section-title">{initial ? 'Edit' : 'New'} card</h3>
 
-  <label class="block text-sm">
-    Label
-    <input
-      class="mt-1 w-full rounded border px-2 py-1"
-      bind:value={label}
-      placeholder="e.g. 2nd card"
-    />
-  </label>
+  <div>
+    <label for="cf-label" class="input-label">Label</label>
+    <input id="cf-label" class="input" bind:value={label} placeholder="e.g. 2nd card" />
+  </div>
 
-  <label class="block text-sm">
-    Permit type
-    <select class="mt-1 w-full rounded border px-2 py-1" bind:value={type}>
+  <div>
+    <label for="cf-type" class="input-label">Permit type</label>
+    <select id="cf-type" class="input" bind:value={type}>
       <option value="initial_2yr">Initial · 2-year</option>
       <option value="subsequent_3yr">Subsequent temporary · 3-year</option>
       <option value="permanent_5yr">Permanent · 5-year</option>
     </select>
-  </label>
-
-  <div class="grid grid-cols-2 gap-2">
-    <label class="block text-sm">
-      Issued
-      <input type="date" class="mt-1 w-full rounded border px-2 py-1" bind:value={issuedDate} />
-    </label>
-    <label class="block text-sm">
-      Expiry
-      <input type="date" class="mt-1 w-full rounded border px-2 py-1" bind:value={expiryDate} />
-    </label>
   </div>
 
-  <label class="block text-sm">
-    Notes
-    <textarea class="mt-1 w-full rounded border px-2 py-1" rows="2" bind:value={notes}></textarea>
-  </label>
+  <div class="grid grid-cols-2 gap-3">
+    <div>
+      <label for="cf-issued" class="input-label">Issued</label>
+      <input id="cf-issued" type="date" class="input" bind:value={issuedDate} />
+    </div>
+    <div>
+      <label for="cf-expiry" class="input-label">Expiry</label>
+      <input id="cf-expiry" type="date" class="input" bind:value={expiryDate} />
+    </div>
+  </div>
+
+  <div>
+    <label for="cf-notes" class="input-label">Notes</label>
+    <textarea id="cf-notes" class="input" rows="2" bind:value={notes}></textarea>
+  </div>
 
   <div class="flex gap-2">
-    <button
-      class="flex-1 rounded bg-black py-2 text-white disabled:opacity-50"
-      onclick={save}
-      disabled={!issuedDate || !expiryDate}>Save</button
+    <button class="btn-primary flex-1" onclick={save} disabled={!issuedDate || !expiryDate}
+      >Save</button
     >
-    <button class="flex-1 rounded bg-neutral-200 py-2" onclick={onClose}>Cancel</button>
-    {#if initial}<button class="px-3 py-2 text-red-700" onclick={remove}>Delete</button>{/if}
+    <button class="btn-outline flex-1" onclick={onClose}>Cancel</button>
+    {#if initial}<button class="btn-danger-text" onclick={remove}>Delete</button>{/if}
   </div>
 </div>

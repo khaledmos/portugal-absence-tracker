@@ -122,79 +122,63 @@
   }
 </script>
 
-<div class="space-y-3 rounded-xl border bg-white p-4 dark:bg-neutral-900">
-  <h3 class="font-semibold">{initial ? 'Edit' : 'New'} trip</h3>
+<div class="card space-y-4">
+  <h3 class="section-title">{initial ? 'Edit' : 'New'} trip</h3>
 
   <!-- Status -->
-  <div class="flex gap-2">
+  <div class="tab-toggle">
     <button
-      class="flex-1 rounded border py-1 {status === 'past' ? 'bg-black text-white' : ''}"
+      class="tab-toggle-btn {status === 'past' ? 'tab-toggle-btn-active' : ''}"
       onclick={() => (status = 'past')}>Past</button
     >
     <button
-      class="flex-1 rounded border py-1 {status === 'planned' ? 'bg-black text-white' : ''}"
+      class="tab-toggle-btn {status === 'planned' ? 'tab-toggle-btn-active' : ''}"
       onclick={() => (status = 'planned')}>Planned</button
     >
   </div>
 
   <!-- Portugal dates (always shown) -->
-  <div class="grid grid-cols-2 gap-2">
-    <label class="block text-sm"
-      >Left Portugal
-      <input
-        type="date"
-        class="mt-1 w-full rounded border px-2 py-1"
-        bind:value={portugalExitDate}
-      />
-    </label>
-    <label class="block text-sm"
-      >Returned to Portugal
-      <input
-        type="date"
-        class="mt-1 w-full rounded border px-2 py-1"
-        bind:value={portugalReturnDate}
-      />
-    </label>
+  <div class="grid grid-cols-2 gap-3">
+    <div>
+      <label for="tf-pt-exit" class="input-label">Left Portugal</label>
+      <input id="tf-pt-exit" type="date" class="input" bind:value={portugalExitDate} />
+    </div>
+    <div>
+      <label for="tf-pt-return" class="input-label">Returned to Portugal</label>
+      <input id="tf-pt-return" type="date" class="input" bind:value={portugalReturnDate} />
+    </div>
   </div>
 
   <!-- Destination -->
-  <div class="text-sm">
-    <div class="mb-1">Main destination country</div>
+  <div>
+    <span class="input-label">Main destination country</span>
     <CountryPicker bind:value={primaryDestinationCountry} />
   </div>
 
   <!-- Schengen dates + locations: only for non-Schengen destinations -->
   {#if primaryDestinationCountry && !destinationIsSchengen}
-    <div class="space-y-2 rounded border border-dashed p-3">
-      <div class="grid grid-cols-2 gap-2">
-        <label class="block text-sm"
-          >Left Schengen
-          <input
-            type="date"
-            class="mt-1 w-full rounded border px-2 py-1"
-            bind:value={schengenExitDate}
-          />
-        </label>
-        <label class="block text-sm"
-          >Re-entered Schengen
-          <input
-            type="date"
-            class="mt-1 w-full rounded border px-2 py-1"
-            bind:value={schengenReturnDate}
-          />
-        </label>
+    <div class="space-y-3 rounded-xl p-4" style="background: var(--color-surface-soft);">
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label for="tf-sch-exit" class="input-label">Left Schengen</label>
+          <input id="tf-sch-exit" type="date" class="input" bind:value={schengenExitDate} />
+        </div>
+        <div>
+          <label for="tf-sch-return" class="input-label">Re-entered Schengen</label>
+          <input id="tf-sch-return" type="date" class="input" bind:value={schengenReturnDate} />
+        </div>
       </div>
-      <p class="text-xs text-neutral-500">
+      <p class="caption-muted">
         Fill these only if you transited through another Schengen country before leaving (or after
         returning). Otherwise leave empty — Schengen absence will use your Portugal dates.
       </p>
-      <div class="grid grid-cols-2 gap-2">
-        <div class="block text-sm">
-          <div class="mb-1">Exit Schengen from</div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <span class="input-label">Exit Schengen from</span>
           <CountryPicker bind:value={schengenExitLocation} schengenOnly />
         </div>
-        <div class="block text-sm">
-          <div class="mb-1">Re-entered Schengen through</div>
+        <div>
+          <span class="input-label">Re-entered Schengen through</span>
           <CountryPicker bind:value={schengenReturnLocation} schengenOnly />
         </div>
       </div>
@@ -202,28 +186,26 @@
   {/if}
 
   <!-- Other countries visited (optional) -->
-  <div class="text-sm">
-    <div class="mb-1">Other countries visited <span class="text-neutral-400">(optional)</span></div>
+  <div>
+    <span class="input-label">
+      Other countries visited <span class="text-neutral-400">(optional)</span>
+    </span>
     <CountriesMultiPicker bind:value={otherCountriesVisited} />
-    <p class="mt-1 text-xs text-neutral-500">
-      For your own travel diary. Doesn't change the calculation.
-    </p>
+    <p class="caption-muted mt-1.5">For your own travel diary. Doesn't change the calculation.</p>
   </div>
 
   <!-- Purposes (multi-select) -->
-  <div class="text-sm">
-    <div class="mb-1">Purposes <span class="text-neutral-400">(optional)</span></div>
-    <div class="flex flex-wrap gap-1">
+  <div>
+    <span class="input-label">Purposes <span class="text-neutral-400">(optional)</span></span>
+    <div class="flex flex-wrap gap-1.5">
       {#each purposeOptions as p (p.id)}
         <button
-          class="rounded-full border px-2 py-1 text-xs {purposes.includes(p.id)
-            ? 'bg-black text-white'
-            : ''}"
+          class="filter-pill {purposes.includes(p.id) ? 'filter-pill-active' : ''}"
           onclick={() => togglePurpose(p.id)}>{p.label}</button
         >
       {/each}
     </div>
-    <p class="mt-1 text-xs text-neutral-500">
+    <p class="caption-muted mt-2">
       Some purposes may justify extended absences under Article 85 of Lei n.º 23/2007 — particularly
       <strong>business</strong>, <strong>work</strong>, <strong>family</strong>, and
       <strong>medical</strong> reasons. Tourism and other purposes are tracked for your own records only.
@@ -231,14 +213,14 @@
   </div>
 
   <!-- Notes -->
-  <label class="block text-sm"
-    >Notes
-    <textarea class="mt-1 w-full rounded border px-2 py-1" rows="2" bind:value={notes}></textarea>
-  </label>
+  <div>
+    <label for="tf-notes" class="input-label">Notes</label>
+    <textarea id="tf-notes" class="input" rows="2" bind:value={notes}></textarea>
+  </div>
 
   <!-- Live impact preview -->
   {#if preview}
-    <div class="rounded border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-900">
+    <div class="rounded-xl bg-emerald-50 p-3 text-xs text-emerald-900">
       <div class="mb-1 font-semibold">Impact preview</div>
       Portugal: {preview.before.portugal.interpolated.used} →
       <strong>{preview.after.portugal.interpolated.used}</strong>
@@ -250,15 +232,15 @@
   {/if}
 
   {#if saveError}
-    <div class="rounded border border-red-200 bg-red-50 p-3 text-xs text-red-800">
+    <div class="rounded-xl bg-red-50 p-3 text-xs text-red-800">
       {saveError}
     </div>
   {/if}
 
   <!-- Actions -->
   <div class="flex gap-2">
-    <button class="flex-1 rounded bg-black py-2 text-white" onclick={save}>Save</button>
-    <button class="flex-1 rounded bg-neutral-200 py-2" onclick={onClose}>Cancel</button>
-    {#if initial}<button class="px-3 py-2 text-red-700" onclick={remove}>Delete</button>{/if}
+    <button class="btn-primary flex-1" onclick={save}>Save</button>
+    <button class="btn-outline flex-1" onclick={onClose}>Cancel</button>
+    {#if initial}<button class="btn-danger-text" onclick={remove}>Delete</button>{/if}
   </div>
 </div>
