@@ -32,15 +32,18 @@
   }
 </script>
 
-<h1 class="mb-4 text-xl font-semibold">Settings</h1>
+<header class="mb-5">
+  <h1 class="page-title">Settings</h1>
+</header>
 
-<section class="mb-4 space-y-3 rounded-xl border bg-white p-4 dark:bg-neutral-900">
-  <h2 class="font-semibold">Calculation</h2>
+<section class="card mb-4 space-y-4">
+  <h2 class="section-title">Calculation</h2>
 
-  <label class="block text-sm">
-    Day-counting convention
+  <div>
+    <label for="dcv" class="input-label">Day-counting convention</label>
     <select
-      class="mt-1 w-full rounded border px-2 py-1"
+      id="dcv"
+      class="input"
       value={data.settings.daycountConvention}
       onchange={(e) =>
         data.updateSettings({
@@ -57,12 +60,13 @@
         >Exclusive both — neither border day absent (2 days, lenient)</option
       >
     </select>
-  </label>
+  </div>
 
-  <label class="block text-sm">
-    Default scope view
+  <div>
+    <label for="dsv" class="input-label">Default scope view</label>
     <select
-      class="mt-1 w-full rounded border px-2 py-1"
+      id="dsv"
+      class="input"
       value={data.settings.defaultScopeView}
       onchange={(e) =>
         data.updateSettings({
@@ -73,26 +77,32 @@
       <option value="portugal">Portugal only</option>
       <option value="schengen">Schengen only</option>
     </select>
-  </label>
+  </div>
 </section>
 
-<section class="mb-4 space-y-3 rounded-xl border bg-white p-4 dark:bg-neutral-900">
-  <h2 class="font-semibold">Backup</h2>
-  <p class="text-xs text-neutral-500">
+<section class="card mb-4 space-y-3">
+  <h2 class="section-title">Backup</h2>
+  <p class="caption-muted">
     Last backup: {data.settings.lastBackupAt
       ? new Date(data.settings.lastBackupAt).toLocaleString()
       : 'never'}
   </p>
-  <button class="w-full rounded bg-black py-2 text-white" onclick={exportFile}>Export JSON</button>
-  <label class="block text-sm">
-    Import JSON
-    <input type="file" accept="application/json" class="mt-1 block" onchange={importFile} />
-  </label>
-  {#if importStatus}<div class="text-xs">{importStatus}</div>{/if}
+  <button class="btn-primary w-full" onclick={exportFile}>Export JSON</button>
+  <div>
+    <label for="import-file" class="input-label">Import JSON</label>
+    <input
+      id="import-file"
+      type="file"
+      accept="application/json"
+      class="block w-full text-sm text-neutral-700 file:mr-3 file:rounded-lg file:border-0 file:bg-neutral-100 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-neutral-700 hover:file:bg-neutral-200"
+      onchange={importFile}
+    />
+  </div>
+  {#if importStatus}<div class="caption">{importStatus}</div>{/if}
 </section>
 
-<section class="mb-4 space-y-3 rounded-xl border bg-white p-4 text-sm dark:bg-neutral-900">
-  <h2 class="font-semibold">About this app</h2>
+<section class="card mb-4 space-y-3 text-sm">
+  <h2 class="section-title">About this app</h2>
   <p>
     This app helps Portuguese residence permit holders track time spent outside Portugal and the
     Schengen Area against <strong>Article 85.2 of Lei n.º 23/2007</strong>.
@@ -101,19 +111,18 @@
     It is not legal advice. For decisions affecting your residency, consult AIMA or a licensed
     Portuguese immigration attorney.
   </p>
-  <p class="text-xs text-neutral-500">
+  <p class="caption-muted">
     Limits are expressed in months by the law. Consecutive limits are computed using exact calendar
     arithmetic; interpolated limits use 30.4375 days/month (e.g., 8 months ≈ 244 days).
   </p>
-  <p class="text-neutral-500">
+  <p class="caption">
     Built with care in Lisbon by Khaled Mostafa.<br />
-    Feedback:
-    <a class="underline" href="mailto:khaled@dedwen.co">khaled@dedwen.co</a>
+    Feedback: <a class="underline" href="mailto:khaled@dedwen.co">khaled@dedwen.co</a>
   </p>
 </section>
 
-<section class="mb-4 space-y-3 rounded-xl border bg-white p-4 text-sm dark:bg-neutral-900">
-  <h2 class="font-semibold">Privacy notice</h2>
+<section class="card mb-4 space-y-3 text-sm">
+  <h2 class="section-title">Privacy notice</h2>
   <p>
     Your residence card details, trip dates, destinations, purposes, and notes are stored locally on
     your device and are not sent to the app creator.
@@ -123,7 +132,7 @@
     usage, such as visits, device type, approximate country, and returning visits. Analytics do not
     include your travel or residence data.
   </p>
-  <p class="text-neutral-500">
+  <p class="caption">
     Local app data stays on your device until you delete it, clear browser storage, or uninstall the
     app.
   </p>
