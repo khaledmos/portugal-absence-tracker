@@ -151,7 +151,7 @@
 
   <!-- Destination -->
   <div class="text-sm">
-    <div class="mb-1">Primary destination country</div>
+    <div class="mb-1">Main destination country</div>
     <CountryPicker bind:value={primaryDestinationCountry} />
   </div>
 
@@ -181,22 +181,14 @@
         returning). Otherwise leave empty — Schengen absence will use your Portugal dates.
       </p>
       <div class="grid grid-cols-2 gap-2">
-        <label class="block text-sm"
-          >Exit Schengen at
-          <input
-            class="mt-1 w-full rounded border px-2 py-1"
-            bind:value={schengenExitLocation}
-            placeholder="e.g. MAD airport"
-          />
-        </label>
-        <label class="block text-sm"
-          >Re-entered Schengen at
-          <input
-            class="mt-1 w-full rounded border px-2 py-1"
-            bind:value={schengenReturnLocation}
-            placeholder="e.g. FCO airport"
-          />
-        </label>
+        <div class="block text-sm">
+          <div class="mb-1">Exit Schengen from</div>
+          <CountryPicker bind:value={schengenExitLocation} schengenOnly />
+        </div>
+        <div class="block text-sm">
+          <div class="mb-1">Re-entered Schengen through</div>
+          <CountryPicker bind:value={schengenReturnLocation} schengenOnly />
+        </div>
       </div>
     </div>
   {/if}

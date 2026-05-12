@@ -3,23 +3,28 @@
 
   let {
     value = $bindable(''),
-    placeholder = 'Search countries…'
-  }: { value?: string; placeholder?: string } = $props();
+    placeholder = 'Search countries…',
+    schengenOnly = false
+  }: { value?: string; placeholder?: string; schengenOnly?: boolean } = $props();
 
   let query = $state('');
   let open = $state(false);
 
+  const pool = $derived(schengenOnly ? COUNTRIES.filter((c) => c.isSchengen) : COUNTRIES);
+
   const filtered = $derived(
     query.trim() === ''
-      ? COUNTRIES.slice(0, 12)
-      : COUNTRIES.filter(
-          (c) =>
-            c.name.toLowerCase().includes(query.toLowerCase()) ||
-            c.code.toLowerCase().startsWith(query.toLowerCase())
-        ).slice(0, 20)
+      ? pool.slice(0, 12)
+      : pool
+          .filter(
+            (c) =>
+              c.name.toLowerCase().includes(query.toLowerCase()) ||
+              c.code.toLowerCase().startsWith(query.toLowerCase())
+          )
+          .slice(0, 20)
   );
 
-  const current = $derived(COUNTRIES.find((c) => c.code === value));
+  const current = $derived(pool.find((c) => c.code === value));
 
   function pick(code: string) {
     value = code;
