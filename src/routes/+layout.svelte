@@ -36,7 +36,7 @@
   {/if}
 </svelte:head>
 
-<div class="min-h-screen pb-24">
+<div class="min-h-screen" style="padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px));">
   <main class="mx-auto max-w-2xl px-4 pt-6 pb-4 sm:px-6">
     {@render children()}
   </main>

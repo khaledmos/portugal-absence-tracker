@@ -16,10 +16,7 @@ async function main() {
   const svgBuffer = readFileSync(sourcePath);
 
   for (const size of [192, 512]) {
-    const buf = await sharp(svgBuffer)
-      .resize(size, size)
-      .png({ compressionLevel: 9 })
-      .toBuffer();
+    const buf = await sharp(svgBuffer).resize(size, size).png({ compressionLevel: 9 }).toBuffer();
     writeFileSync(join(iconsDir, `icon-${size}.png`), buf);
     console.log(`wrote static/icons/icon-${size}.png (${buf.length} bytes)`);
   }

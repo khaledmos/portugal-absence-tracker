@@ -31,7 +31,9 @@
 }
 
 :root {
-  color-scheme: light dark;
+  /* Lock to light theme regardless of OS preference — prevents iOS Safari from
+     applying dark-mode interpretation to our explicit colors. */
+  color-scheme: light;
 }
 
 html,
@@ -44,18 +46,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-@media (prefers-color-scheme: dark) {
-  html,
-  body {
-    background: oklch(0.18 0.02 260);
-    color: oklch(0.96 0.01 250);
-  }
-}
-
 @layer components {
   /* ---------- Cards ---------- */
   .card {
     background: var(--color-card-bg);
+    color: var(--color-text-primary);
     border-radius: 1.25rem; /* 20px */
     padding: 1rem;
     box-shadow: var(--shadow-card);
@@ -63,6 +58,7 @@ body {
 
   .card-active {
     background: var(--color-card-active-bg);
+    color: var(--color-text-primary);
     border: 1px solid var(--color-card-active-border);
     border-radius: 1.25rem;
     padding: 1rem;
@@ -238,17 +234,28 @@ body {
     background: var(--color-card-bg);
     border: 1px solid var(--color-divider);
     border-radius: 0.625rem;
-    padding: 0.5625rem 0.75rem;
+    padding: 0.5rem 0.75rem;
     font-size: 0.9375rem;
     color: var(--color-text-primary);
     transition:
       border-color 0.15s,
       box-shadow 0.15s;
+    -webkit-appearance: none;
+    appearance: none;
   }
   .input:focus {
     outline: none;
     border-color: var(--color-text-primary);
     box-shadow: 0 0 0 3px oklch(0.93 0.01 260);
+  }
+  .input::placeholder {
+    color: var(--color-text-muted);
+    opacity: 1; /* iOS Safari otherwise lightens placeholders */
+  }
+  /* Native date input quirks on iOS Safari — keep value text dark and prevent overflow. */
+  .input[type='date'] {
+    min-width: 0;
+    -webkit-text-fill-color: var(--color-text-primary);
   }
   .input-label {
     display: block;
@@ -321,5 +328,27 @@ body {
     background: var(--color-card-bg);
     color: var(--color-text-primary);
     box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+  }
+}
+
+/* ---------- Mobile compactness ---------- */
+@media (max-width: 640px) {
+  .card,
+  .card-active {
+    padding: 0.875rem;
+  }
+  .card-dark {
+    padding: 1rem;
+  }
+  .input {
+    font-size: 1rem; /* iOS Safari refuses to zoom inputs ≥16px on focus */
+    padding: 0.4375rem 0.6875rem;
+  }
+  .input-label {
+    font-size: 0.8125rem;
+    margin-bottom: 0.3125rem;
+  }
+  .page-title {
+    font-size: 1.625rem;
   }
 }

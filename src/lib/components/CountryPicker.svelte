@@ -57,14 +57,15 @@
   </button>
   {#if open}
     <div
-      class="absolute inset-x-0 z-10 mt-1.5 max-h-64 overflow-auto rounded-xl bg-white shadow-lg"
-      style="box-shadow: var(--shadow-card-elev);"
+      class="absolute inset-x-0 z-10 mt-1.5 max-h-64 overflow-auto rounded-xl bg-white"
+      style="color: var(--color-text-primary); box-shadow: var(--shadow-card-elev);"
     >
       <!-- svelte-ignore a11y_autofocus -->
       <input
         bind:value={query}
         {placeholder}
-        class="w-full border-b border-neutral-200 bg-transparent px-3 py-2.5 text-sm focus:outline-none"
+        class="w-full border-b border-neutral-200 bg-white px-3 py-2.5 text-base focus:outline-none"
+        style="color: var(--color-text-primary);"
         autofocus
       />
       <ul>
@@ -73,10 +74,11 @@
             <button
               type="button"
               class="flex w-full justify-between px-3 py-2.5 text-left text-sm hover:bg-neutral-50"
+              style="color: var(--color-text-primary);"
               onclick={() => pick(c.code)}
             >
               <span>{c.flag} {c.name}</span>
-              <span class="text-xs text-neutral-400">
+              <span class="text-xs" style="color: var(--color-text-muted);">
                 {c.isSchengen ? 'Schengen' : 'Outside Schengen'}
               </span>
             </button>

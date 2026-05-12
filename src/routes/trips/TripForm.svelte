@@ -122,7 +122,7 @@
   }
 </script>
 
-<div class="card space-y-4">
+<div class="card space-y-3 sm:space-y-4">
   <h3 class="section-title">{initial ? 'Edit' : 'New'} trip</h3>
 
   <!-- Status -->
@@ -157,7 +157,10 @@
 
   <!-- Schengen dates + locations: only for non-Schengen destinations -->
   {#if primaryDestinationCountry && !destinationIsSchengen}
-    <div class="space-y-3 rounded-xl p-4" style="background: var(--color-surface-soft);">
+    <div
+      class="space-y-2 rounded-xl p-3 sm:space-y-3 sm:p-4"
+      style="background: var(--color-surface-soft);"
+    >
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label for="tf-sch-exit" class="input-label">Left Schengen</label>

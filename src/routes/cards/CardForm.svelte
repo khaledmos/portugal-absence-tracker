@@ -34,7 +34,7 @@
   }
 </script>
 
-<div class="card space-y-4">
+<div class="card space-y-3 sm:space-y-4">
   <h3 class="section-title">{initial ? 'Edit' : 'New'} card</h3>
 
   <div>
