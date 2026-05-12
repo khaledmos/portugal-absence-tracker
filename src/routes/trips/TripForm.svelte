@@ -30,7 +30,6 @@
   const purposeOptions: { id: TripPurpose; label: string }[] = [
     { id: 'business', label: 'Business' },
     { id: 'work', label: 'Work' },
-    { id: 'personal', label: 'Personal' },
     { id: 'tourism', label: 'Tourism' },
     { id: 'family', label: 'Family' },
     { id: 'medical', label: 'Medical' },
@@ -218,7 +217,7 @@
     <p class="mt-1 text-xs text-neutral-500">
       Some purposes may justify extended absences under Article 85 of Lei n.º 23/2007 — particularly
       <strong>business</strong>, <strong>work</strong>, <strong>family</strong>, and
-      <strong>medical</strong> reasons. Tourism and personal travel are tracked for your own records only.
+      <strong>medical</strong> reasons. Tourism and other purposes are tracked for your own records only.
     </p>
   </div>
 
