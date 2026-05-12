@@ -36,68 +36,77 @@
   }
 </script>
 
-<header class="mb-4 flex items-center justify-between">
-  <h1 class="text-xl font-semibold">Trips</h1>
-  <button class="rounded bg-black px-3 py-2 text-white" onclick={() => (creating = true)}
-    >+ Add trip</button
-  >
+<header class="mb-5 flex items-center justify-between">
+  <h1 class="page-title">Trips</h1>
+  <button class="btn-primary" onclick={() => (creating = true)}>
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      class="h-4 w-4"
+      aria-hidden="true"
+    >
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+    Add trip
+  </button>
 </header>
 
-<div class="mb-4 flex gap-2 text-xs">
+<div class="mb-5 flex flex-wrap gap-2">
   {#each tabs as [v, label] (v)}
     <button
-      class="rounded-full border px-3 py-1 {filter === v ? 'bg-black text-white' : ''}"
+      class="filter-pill {filter === v ? 'filter-pill-active' : ''}"
       onclick={() => (filter = v)}>{label}</button
     >
   {/each}
 </div>
 
-{#if creating}<TripForm onClose={() => (creating = false)} />{/if}
-{#if editing}<TripForm initial={editing} onClose={() => (editing = null)} />{/if}
+{#if creating}<div class="mb-4"><TripForm onClose={() => (creating = false)} /></div>{/if}
+{#if editing}
+  <div class="mb-4"><TripForm initial={editing} onClose={() => (editing = null)} /></div>
+{/if}
 
-<ul class="mt-3 space-y-2">
+<ul class="space-y-3">
   {#each filtered as t (t.id)}
     {@const current = isCurrent(t)}
     {@const sch = isSchengen(t.primaryDestinationCountry)}
     {@const extra = t.otherCountriesVisited ?? []}
-    <li
-      class="rounded-xl border p-3 {current
-        ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/30'
-        : ''}"
-    >
-      <button class="w-full text-left" onclick={() => (editing = t)}>
-        <div class="flex justify-between">
-          <span class="font-semibold">
-            {countryFlag(t.primaryDestinationCountry)}
-            {countryName(t.primaryDestinationCountry)}{extra.length > 0 ? ` +${extra.length}` : ''}
-          </span>
-          <span class="text-sm font-semibold"
-            >{daysBetween(t.portugalExitDate, t.portugalReturnDate) - 1} d</span
-          >
-        </div>
-        <div class="text-xs text-neutral-500">
-          {t.portugalExitDate} → {t.portugalReturnDate}
-        </div>
-        {#if extra.length > 0}
-          <div class="mt-1 text-xs text-neutral-600 dark:text-neutral-300">
-            Visited: {extra.map((c) => `${countryFlag(c)} ${countryName(c)}`).join(', ')}
+    <li class="card {current ? 'border-l-4 border-amber-400' : ''}">
+      <button class="block w-full text-left" onclick={() => (editing = t)}>
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-2 text-[17px] font-semibold">
+              <span class="text-xl leading-none">{countryFlag(t.primaryDestinationCountry)}</span>
+              <span class="truncate"
+                >{countryName(t.primaryDestinationCountry)}{extra.length > 0
+                  ? ` +${extra.length}`
+                  : ''}</span
+              >
+            </div>
+            <div class="caption-muted mt-1">
+              {t.portugalExitDate} → {t.portugalReturnDate}
+            </div>
+            {#if extra.length > 0}
+              <div class="caption mt-1.5">
+                Visited: {extra.map((c) => `${countryFlag(c)} ${countryName(c)}`).join(', ')}
+              </div>
+            {/if}
           </div>
-        {/if}
-        <div class="mt-1 flex flex-wrap gap-1 text-xs">
-          <span
-            class="rounded px-1.5 py-0.5 {sch
-              ? 'bg-blue-100 text-blue-900'
-              : 'bg-amber-100 text-amber-900'}">{sch ? 'Schengen' : 'Outside Schengen'}</span
+          <div class="text-base font-semibold whitespace-nowrap">
+            {daysBetween(t.portugalExitDate, t.portugalReturnDate) - 1} d
+          </div>
+        </div>
+        <div class="mt-3 flex flex-wrap gap-1.5">
+          <span class="pill {sch ? 'pill-schengen' : 'pill-outside'}"
+            >{sch ? 'Schengen' : 'Outside Schengen'}</span
           >
           {#each t.purposes ?? [] as p (p)}
-            <span class="rounded bg-emerald-100 px-1.5 py-0.5 text-emerald-900">{p}</span>
+            <span class="pill pill-purpose">{p}</span>
           {/each}
-          {#if t.status === 'planned'}<span
-              class="rounded bg-purple-100 px-1.5 py-0.5 text-purple-900">planned</span
-            >{/if}
-          {#if t.needsReview}<span class="rounded bg-yellow-100 px-1.5 py-0.5 text-yellow-900"
-              >needs review ⚠️</span
-            >{/if}
+          {#if t.status === 'planned'}<span class="pill pill-planned">planned</span>{/if}
+          {#if t.needsReview}<span class="pill pill-review">needs review</span>{/if}
         </div>
       </button>
     </li>
