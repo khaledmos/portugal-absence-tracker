@@ -94,8 +94,8 @@
 <section class="mb-4 space-y-3 rounded-xl border bg-white p-4 text-sm dark:bg-neutral-900">
   <h2 class="font-semibold">About this app</h2>
   <p>
-    This app helps residence permit holders track time spent outside Portugal and the Schengen Area
-    against <strong>Article 85.2 of Lei n.º 23/2007</strong>.
+    This app helps Portuguese residence permit holders track time spent outside Portugal and the
+    Schengen Area against <strong>Article 85.2 of Lei n.º 23/2007</strong>.
   </p>
   <p>
     It is not legal advice. For decisions affecting your residency, consult AIMA or a licensed
@@ -103,8 +103,7 @@
   </p>
   <p class="text-xs text-neutral-500">
     Limits are expressed in months by the law. Consecutive limits are computed using exact calendar
-    arithmetic (<code>addMonths</code>); interpolated limits use 30.4375 days/month (e.g., 8 months
-    ≈ 244 days).
+    arithmetic; interpolated limits use 30.4375 days/month (e.g., 8 months ≈ 244 days).
   </p>
   <p class="text-neutral-500">
     Built with care in Lisbon by Khaled Mostafa.<br />
