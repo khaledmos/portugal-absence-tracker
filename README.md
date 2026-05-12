@@ -20,7 +20,24 @@ npm run build        # static build → ./build
 ## Deploy
 
 The build is fully static. Drag-and-drop `build/` to Cloudflare Pages, Netlify, Vercel, or any
-static host. No server, no environment variables.
+static host. No server, no accounts.
+
+### Optional: Cloudflare Web Analytics
+
+If you want basic visit counts (privacy-friendly — no cookies, no fingerprinting, no consent
+banner needed), set the build-time env var `PUBLIC_CF_ANALYTICS_TOKEN` to your Cloudflare Web
+Analytics site token. When set, the layout injects the CWA beacon; when unset, no analytics load
+and the app makes no third-party network calls. See `.env.example`.
+
+## Privacy
+
+All residence-card details, trip dates, destinations, purposes, and notes live in your
+browser's IndexedDB and never leave the device. The app makes no third-party network calls
+at runtime by default.
+
+If you enable Cloudflare Web Analytics (above), only aggregate signals are recorded — visits,
+device class, approximate country, and per-day unique-visitor counts. No travel or residence
+data is ever sent.
 
 ## Spec & plan
 

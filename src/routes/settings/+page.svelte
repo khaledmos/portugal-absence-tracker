@@ -91,19 +91,36 @@
   {#if importStatus}<div class="text-xs">{importStatus}</div>{/if}
 </section>
 
-<section class="mb-4 space-y-2 rounded-xl border bg-white p-4 text-sm dark:bg-neutral-900">
-  <h2 class="font-semibold">About</h2>
+<section class="mb-4 space-y-3 rounded-xl border bg-white p-4 text-sm dark:bg-neutral-900">
+  <h2 class="font-semibold">About this app</h2>
   <p>
-    This app tracks absence days against
-    <strong>Article 85.2 of Lei n.º 23/2007</strong> (Portuguese Aliens Act).
+    This app helps residence permit holders track time spent outside Portugal and the Schengen Area
+    against <strong>Article 85.2 of Lei n.º 23/2007</strong>.
   </p>
   <p>
-    Limits are expressed in months by the law. Consecutive limits are computed using exact calendar
-    arithmetic (<code>addMonths</code>); interpolated limits use 30.4375 days/month (e.g., 8 months
-    ≈ 244 days).
+    It is not legal advice. For decisions affecting your residency, consult AIMA or a licensed
+    Portuguese immigration attorney.
   </p>
   <p class="text-neutral-500">
-    <strong>Disclaimer.</strong> This is not legal advice. For decisions affecting your residency, consult
-    AIMA or a licensed Portuguese immigration attorney.
+    Built with care in Lisbon by Khaled Mostafa.<br />
+    Feedback:
+    <a class="underline" href="mailto:khaled@dedwen.co">khaled@dedwen.co</a>
+  </p>
+</section>
+
+<section class="mb-4 space-y-3 rounded-xl border bg-white p-4 text-sm dark:bg-neutral-900">
+  <h2 class="font-semibold">Privacy notice</h2>
+  <p>
+    Your residence card details, trip dates, destinations, purposes, and notes are stored locally on
+    your device and are not sent to the app creator.
+  </p>
+  <p>
+    If basic privacy-friendly analytics are enabled, they are used only to understand general app
+    usage, such as visits, device type, approximate country, and returning visits. Analytics do not
+    include your travel or residence data.
+  </p>
+  <p class="text-neutral-500">
+    Local app data stays on your device until you delete it, clear browser storage, or uninstall the
+    app.
   </p>
 </section>
