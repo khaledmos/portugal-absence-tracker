@@ -3,12 +3,11 @@
 A privacy-first PWA for foreign residents of Portugal to track absence days against the Article 85
 limits of Lei n.º 23/2007. All data stays on your device.
 
-Live: <https://portugal-residence-tracker.pages.dev/>
+Live: <https://portugal-absence-tracker.pages.dev/>
 
-> The repository, deployed URL, and IndexedDB instance still use the original
-> `portugal-residence-tracker` / `pt-residence-tracker` slug. The app was renamed
-> to "Portugal Absence Tracker" after launch — internal slugs are preserved so
-> existing user data (cards, trips, settings) carries over seamlessly.
+> The IndexedDB database name remains `pt-residence-tracker` from before the
+> rename so existing user data (cards, trips, settings) carries over seamlessly.
+> See `src/lib/db/schema.ts` for the explicit DO-NOT-CHANGE comment.
 
 ## Stack
 

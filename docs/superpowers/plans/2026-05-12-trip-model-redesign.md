@@ -2700,7 +2700,7 @@ Expected: 12 new commits on top of v1 (one per task), each focused and conventio
 git push origin main
 ```
 
-Confirm the push succeeds and the new commits appear at https://github.com/khaledmos/portugal-residence-tracker
+Confirm the push succeeds and the new commits appear at https://github.com/khaledmos/portugal-absence-tracker
 
 ---
 

@@ -6,7 +6,7 @@
 
 ## 1. Context
 
-v1 shipped on 2026-05-11 (commit `ff6f14d`, 21 commits, 45 unit tests, 1 E2E passing, deployed to `khaledmos/portugal-residence-tracker` private repo). The user tested v1 with real travel scenarios and surfaced four model gaps that materially affect what the absence calculator can express.
+v1 shipped on 2026-05-11 (commit `ff6f14d`, 21 commits, 45 unit tests, 1 E2E passing, deployed to `khaledmos/portugal-absence-tracker` private repo). The user tested v1 with real travel scenarios and surfaced four model gaps that materially affect what the absence calculator can express.
 
 The gaps are not bugs in the code — the calculator does what its inputs say. The gaps are in the inputs themselves: the v1 `Trip` schema assumes "one departure, one destination, one return" and treats Portugal absence and Schengen absence as the same interval. Real trips routinely break both assumptions.
 
