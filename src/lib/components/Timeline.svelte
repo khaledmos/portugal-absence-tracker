@@ -14,32 +14,32 @@
   }
 </script>
 
-<div class="rounded-xl border bg-white p-4 dark:bg-neutral-900">
-  <h3 class="mb-2 text-sm font-semibold">Card timeline</h3>
-  <div class="relative h-7 rounded bg-neutral-100 dark:bg-neutral-800">
+<div class="card">
+  <h3 class="section-title mb-3">Card timeline</h3>
+  <div class="relative h-7 rounded-full bg-neutral-100">
     {#each trips as t (t.id)}
       {@const left = pct(t.portugalExitDate)}
-      {@const width = Math.max(0.5, pct(t.portugalReturnDate) - left)}
+      {@const width = Math.max(0.8, pct(t.portugalReturnDate) - left)}
       <div
-        class="absolute top-1 h-5 rounded-sm {t.status === 'past'
-          ? 'bg-blue-600'
-          : 'border border-dashed border-blue-700 bg-blue-300'}"
+        class="absolute top-1 h-5 rounded-md {t.status === 'past'
+          ? 'bg-blue-500'
+          : 'border border-dashed border-blue-500 bg-blue-200'}"
         style="left: {left}%; width: {width}%"
         title="{t.portugalExitDate} → {t.portugalReturnDate}"
       ></div>
     {/each}
-    <div class="absolute -top-0.5 -bottom-0.5 w-0.5 bg-red-500" style="left: {pct(today)}%"></div>
+    <div class="absolute -top-1 -bottom-1 w-0.5 bg-red-500" style="left: {pct(today)}%"></div>
   </div>
-  <div class="mt-2 flex justify-between text-[10px] text-neutral-500">
+  <div class="caption-muted mt-3 flex justify-between">
     <span>{card.issuedDate}</span>
     <span>today</span>
     <span>{card.expiryDate}</span>
   </div>
-  <div class="mt-2 flex items-center gap-3 text-[10px] text-neutral-500">
-    <span class="flex items-center gap-1">
-      <span class="inline-block h-2 w-3 rounded-sm bg-blue-600"></span> Trips outside Portugal
+  <div class="caption-muted mt-3 flex items-center gap-4">
+    <span class="flex items-center gap-1.5">
+      <span class="inline-block h-2.5 w-3 rounded-sm bg-blue-500"></span> Trips outside Portugal
     </span>
-    <span class="flex items-center gap-1">
+    <span class="flex items-center gap-1.5">
       <span class="inline-block h-3 w-0.5 bg-red-500"></span> Today
     </span>
   </div>

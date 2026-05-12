@@ -1,6 +1,19 @@
 <script lang="ts">
-  let { label, used, budget, sub }: { label: string; used: number; budget: number; sub: string } =
-    $props();
+  import type { Snippet } from 'svelte';
+
+  let {
+    label,
+    used,
+    budget,
+    sub,
+    icon
+  }: {
+    label: string;
+    used: number;
+    budget: number;
+    sub: string;
+    icon?: Snippet;
+  } = $props();
 
   const pct = $derived(budget > 0 ? Math.min(100, Math.round((used / budget) * 100)) : 0);
   const remaining = $derived(Math.max(0, budget - used));
@@ -10,16 +23,19 @@
   );
 </script>
 
-<div class="rounded-xl border bg-white p-4 dark:bg-neutral-900">
-  <div class="text-sm font-medium text-neutral-700 dark:text-neutral-300">{label}</div>
-  <div class="mt-2 text-2xl font-bold">
+<div class="card">
+  <div class="flex items-center gap-2.5">
+    {#if icon}
+      <span class="metric-icon-circle">{@render icon()}</span>
+    {/if}
+    <div class="text-[15px] font-semibold">{label}</div>
+  </div>
+  <div class="mt-3 text-[34px] font-bold leading-none">
     {used}<span class="text-sm font-medium text-neutral-500"> / {budget} days used</span>
   </div>
-  <div class="mt-1 text-xs text-neutral-600 dark:text-neutral-400">
-    {pct}% used · {remaining} days remaining
-  </div>
-  <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-800">
+  <div class="caption mt-2">{pct}% used · {remaining} days remaining</div>
+  <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-neutral-200/70">
     <div class="h-full {barColor}" style="width: {pct}%"></div>
   </div>
-  <div class="mt-2 text-[10px] text-neutral-400">{sub}</div>
+  <div class="caption-muted mt-2.5">{sub}</div>
 </div>
