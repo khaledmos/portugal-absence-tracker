@@ -10,8 +10,8 @@ export default defineConfig({
     SvelteKitPWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'Portugal Residence Tracker',
-        short_name: 'PT Tracker',
+        name: 'Portugal Absence Tracker',
+        short_name: 'PT Absence',
         description: 'Track absence days against Portuguese residence permit limits.',
         theme_color: '#1a1d24',
         background_color: '#1a1d24',

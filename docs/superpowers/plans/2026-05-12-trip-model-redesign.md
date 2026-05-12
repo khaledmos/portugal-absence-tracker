@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Migrate the shipped v1 of the Portugal Residence Tracker to a v2 `Trip` schema that expresses two distinct absence intervals (Portugal + Schengen), multi-country trips, and simplified location fields — without losing any existing trip data.
+**Goal:** Migrate the shipped v1 of the Portugal Absence Tracker to a v2 `Trip` schema that expresses two distinct absence intervals (Portugal + Schengen), multi-country trips, and simplified location fields — without losing any existing trip data.
 
 **Architecture:** Iterative refactor on the shipped client-side SvelteKit PWA. Phase 1 renames Trip fields and refactors the engine to be interval-driven. Phase 2 adds the two-interval calculation logic. Phase 3 writes a pure-function Dexie + JSON migration upgrading v1 trips losslessly to v2. Phase 4 rebuilds the trip form and trip list around the new schema. Phase 5 covers E2E and final verification. Each task ends with all unit tests green and one focused commit.
 

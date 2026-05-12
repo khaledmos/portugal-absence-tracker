@@ -2900,7 +2900,7 @@ Create `src/routes/settings/+page.svelte`:
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `pt-residence-tracker-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `portugal-absence-tracker-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
     await data.updateSettings({ lastBackupAt: new Date().toISOString() });
@@ -3054,8 +3054,8 @@ export default defineConfig({
     SvelteKitPWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'Portugal Residence Tracker',
-        short_name: 'PT Tracker',
+        name: 'Portugal Absence Tracker',
+        short_name: 'PT Absence',
         description: 'Track absence days against Portuguese residence permit limits.',
         theme_color: '#1a1d24',
         background_color: '#1a1d24',
@@ -3182,7 +3182,7 @@ All four should be green. Fix anything that fails before proceeding.
 Replace `README.md`:
 
 ```markdown
-# Portugal Residence Tracker
+# Portugal Absence Tracker
 
 A privacy-first PWA for foreign residents of Portugal to track absence days against the Article 85
 limits of Lei n.º 23/2007. All data stays on your device.

@@ -11,7 +11,7 @@
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `pt-residence-tracker-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `portugal-absence-tracker-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
     await data.updateSettings({ lastBackupAt: new Date().toISOString() });
