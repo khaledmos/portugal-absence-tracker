@@ -101,6 +101,11 @@
     It is not legal advice. For decisions affecting your residency, consult AIMA or a licensed
     Portuguese immigration attorney.
   </p>
+  <p class="text-xs text-neutral-500">
+    Limits are expressed in months by the law. Consecutive limits are computed using exact calendar
+    arithmetic (<code>addMonths</code>); interpolated limits use 30.4375 days/month (e.g., 8 months
+    ≈ 244 days).
+  </p>
   <p class="text-neutral-500">
     Built with care in Lisbon by Khaled Mostafa.<br />
     Feedback:
