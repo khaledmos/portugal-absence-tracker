@@ -58,68 +58,73 @@
   }
 </script>
 
-<h1 class="mb-4 text-xl font-semibold">🧮 Simulator</h1>
+<header class="mb-5">
+  <h1 class="page-title">Simulator</h1>
+</header>
 
 {#if !activeCard}
-  <p class="text-sm">Add an active card first.</p>
+  <div class="card">
+    <p class="caption">Add an active card first.</p>
+  </div>
 {:else}
-  <div class="space-y-3 rounded-xl border bg-white p-4 dark:bg-neutral-900">
-    <div class="grid grid-cols-2 gap-2">
-      <label class="block text-sm"
-        >Left Portugal
-        <input
-          type="date"
-          class="mt-1 w-full rounded border px-2 py-1"
-          bind:value={portugalExitDate}
-        />
-      </label>
-      <label class="block text-sm"
-        >Returned to Portugal
-        <input
-          type="date"
-          class="mt-1 w-full rounded border px-2 py-1"
-          bind:value={portugalReturnDate}
-        />
-      </label>
+  <div class="card mb-4 space-y-4">
+    <div class="grid grid-cols-2 gap-3">
+      <div>
+        <label for="sim-left" class="input-label">Left Portugal</label>
+        <input id="sim-left" type="date" class="input" bind:value={portugalExitDate} />
+      </div>
+      <div>
+        <label for="sim-return" class="input-label">Returned to Portugal</label>
+        <input id="sim-return" type="date" class="input" bind:value={portugalReturnDate} />
+      </div>
     </div>
-    <div class="text-sm">
-      <div class="mb-1">Primary destination country</div>
+    <div>
+      <span class="input-label">Main destination country</span>
       <CountryPicker bind:value={primaryDestinationCountry} />
     </div>
     {#if primaryDestinationCountry}
-      <div class="text-xs">
+      <p class="caption-muted">
         {isSchengen(primaryDestinationCountry)
           ? 'Inside Schengen — counts toward Portugal only'
           : 'Outside Schengen — counts toward both Portugal and Schengen'}
-      </div>
+      </p>
     {/if}
   </div>
 
   {#if result}
-    <div class="mt-4 space-y-2 rounded-xl border bg-white p-4 text-sm dark:bg-neutral-900">
-      <h2 class="font-semibold">Impact</h2>
-      <div class="grid grid-cols-[1fr_auto_auto_auto] items-baseline gap-2">
-        <span class="text-xs text-neutral-500">Portugal</span>
-        <span>{result.before.portugal.projectedAfterPlanned.interpolatedUsed}</span>
-        <span class="text-neutral-400">→</span>
-        <strong>{result.after.portugal.projectedAfterPlanned.interpolatedUsed}</strong>
-        <span class="text-xs text-neutral-500">Schengen</span>
-        <span>{result.before.schengen.projectedAfterPlanned.interpolatedUsed}</span>
-        <span class="text-neutral-400">→</span>
-        <strong>{result.after.schengen.projectedAfterPlanned.interpolatedUsed}</strong>
+    <div class="card space-y-4">
+      <h2 class="section-title">Impact</h2>
+      <div class="space-y-2 text-[15px]">
+        <div class="flex items-center justify-between">
+          <span class="text-neutral-500">Portugal</span>
+          <span>
+            {result.before.portugal.projectedAfterPlanned.interpolatedUsed}
+            <span class="text-neutral-400">→</span>
+            <strong>{result.after.portugal.projectedAfterPlanned.interpolatedUsed}</strong>
+          </span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-neutral-500">Schengen</span>
+          <span>
+            {result.before.schengen.projectedAfterPlanned.interpolatedUsed}
+            <span class="text-neutral-400">→</span>
+            <strong>{result.after.schengen.projectedAfterPlanned.interpolatedUsed}</strong>
+          </span>
+        </div>
       </div>
       <div
-        class="rounded p-3 {overLimit
-          ? 'border border-red-200 bg-red-50 text-red-800'
-          : 'border border-emerald-200 bg-emerald-50 text-emerald-800'}"
+        class="flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm {overLimit
+          ? 'bg-red-50 text-red-800'
+          : 'bg-emerald-50 text-emerald-800'}"
       >
-        {overLimit
-          ? '⚠️ This trip would exceed your interpolated absence budget.'
-          : '✅ Within all limits.'}
+        <span class="text-base">{overLimit ? '⚠️' : '✓'}</span>
+        <span>
+          {overLimit
+            ? 'This trip would exceed your interpolated absence budget.'
+            : 'Within all limits.'}
+        </span>
       </div>
-      <button class="w-full rounded bg-black py-2 text-white" onclick={saveAsPlanned}
-        >Save as planned trip</button
-      >
+      <button class="btn-primary w-full" onclick={saveAsPlanned}>Save as planned trip</button>
     </div>
   {/if}
 {/if}
