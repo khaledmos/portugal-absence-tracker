@@ -82,8 +82,12 @@
     return { before, after };
   });
 
+  let saveError = $state('');
+
   async function save() {
     if (!primaryDestinationCountry || !portugalExitDate || !portugalReturnDate) return;
+    saveError = '';
+    // Spread reactive arrays into plain arrays so Dexie's structuredClone can serialize them.
     const trip: Trip = {
       id: initial?.id ?? uuid(),
       status,
@@ -93,16 +97,21 @@
       schengenExitDate: destinationIsSchengen ? undefined : schengenExitDate || undefined,
       schengenReturnDate: destinationIsSchengen ? undefined : schengenReturnDate || undefined,
       primaryDestinationCountry,
-      otherCountriesVisited: otherCountriesVisited.length > 0 ? otherCountriesVisited : undefined,
+      otherCountriesVisited:
+        otherCountriesVisited.length > 0 ? [...otherCountriesVisited] : undefined,
       schengenExitLocation: destinationIsSchengen ? undefined : schengenExitLocation || undefined,
       schengenReturnLocation: destinationIsSchengen
         ? undefined
         : schengenReturnLocation || undefined,
-      purposes: purposes.length > 0 ? purposes : undefined,
+      purposes: purposes.length > 0 ? [...purposes] : undefined,
       notes: notes || undefined
     };
-    await data.upsertTrip(trip);
-    onClose();
+    try {
+      await data.upsertTrip(trip);
+      onClose();
+    } catch (err) {
+      saveError = `Couldn't save: ${(err as Error).message}`;
+    }
   }
 
   async function remove() {
@@ -237,6 +246,12 @@
       Schengen: {preview.before.schengen.interpolated.used} →
       <strong>{preview.after.schengen.interpolated.used}</strong>
       / {preview.after.schengen.interpolated.budgetDays} d
+    </div>
+  {/if}
+
+  {#if saveError}
+    <div class="rounded border border-red-200 bg-red-50 p-3 text-xs text-red-800">
+      {saveError}
     </div>
   {/if}
 
