@@ -39,8 +39,8 @@ test('Madrid-transit trip produces distinct Portugal and Schengen absence', asyn
 
   // Dashboard: Portugal absence = 13 days, Schengen absence = 12 days.
   await page.goto('/');
-  // Active card header confirms data loaded.
-  await expect(page.getByText('2nd card', { exact: true })).toBeVisible();
+  // Home hero subtitle confirms data loaded.
+  await expect(page.getByText(/^Active card · /)).toBeVisible();
 
   await expect(page.getByText('Outside Portugal', { exact: true })).toBeVisible();
   await expect(page.getByText('Outside Schengen', { exact: true })).toBeVisible();
