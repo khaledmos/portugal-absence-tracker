@@ -39,24 +39,12 @@ test('Madrid-transit trip produces distinct Portugal and Schengen absence', asyn
 
   // Dashboard: Portugal absence = 13 days, Schengen absence = 12 days.
   await page.goto('/');
-  // Home hero subtitle confirms data loaded.
-  await expect(page.getByText(/^Active card · /)).toBeVisible();
+  // Home hero confirms data loaded.
+  await expect(page.getByText('Your remaining allowance')).toBeVisible();
 
-  await expect(page.getByText('Outside Portugal', { exact: true })).toBeVisible();
-  await expect(page.getByText('Outside Schengen', { exact: true })).toBeVisible();
+  // Portugal scope is the active hero default. PT absence = 13 d.
+  await expect(page.getByText("You've used 13 / 244 days of your absence allowance")).toBeVisible();
 
-  // Portugal absence = 13 d, Schengen absence = 12 d.
-  // The AbsenceTile card contains both "Outside Portugal" + "days used"; the
-  // Timeline legend only has "Trips outside Portugal" without "days used".
-  const portugalTile = page
-    .locator('.card')
-    .filter({ hasText: 'Outside Portugal' })
-    .filter({ hasText: 'days used' });
-  await expect(portugalTile).toContainText('13');
-
-  const schengenTile = page
-    .locator('.card')
-    .filter({ hasText: 'Outside Schengen' })
-    .filter({ hasText: 'days used' });
-  await expect(schengenTile).toContainText('12');
+  // Schengen absence = 12 d → other-scope chip shows 232 days left (244 − 12).
+  await expect(page.getByText(/Schengen:.*232 days left/)).toBeVisible();
 });

@@ -31,10 +31,9 @@ test('first run flow: accept disclaimer, add card, add trip, see dashboard', asy
   await page.getByRole('button', { name: 'Save' }).click();
   await expect(page.getByText('🇬🇧')).toBeVisible();
 
-  // Dashboard shows the absence numbers.
+  // Dashboard hero shows the absence numbers.
   await page.goto('/');
-  await expect(page.getByText('Outside Portugal', { exact: true })).toBeVisible();
-  await expect(page.getByText('Outside Schengen', { exact: true })).toBeVisible();
-  // Two tiles each show "/ 244 days used" against the 8-month interpolated budget.
-  await expect(page.getByText('/ 244 days used').first()).toBeVisible();
+  await expect(page.getByText('Your remaining allowance')).toBeVisible();
+  // Portugal scope is the default; trip 2025-11-04 → 2025-11-12 = 8 days absence.
+  await expect(page.getByText("You've used 8 / 244 days of your absence allowance")).toBeVisible();
 });

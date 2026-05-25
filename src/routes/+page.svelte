@@ -3,7 +3,6 @@
   import { data, todayISO } from '$lib/stores/data.svelte';
   import { computeCardCompliance } from '$lib/engine/compliance';
   import HomeSummary from '$lib/components/HomeSummary.svelte';
-  import AbsenceTile from '$lib/components/AbsenceTile.svelte';
   import Timeline from '$lib/components/Timeline.svelte';
 
   const today = todayISO();
@@ -20,7 +19,70 @@
         })
       : null
   );
-  let view = $state<'today' | 'projected'>('today');
+
+  // Active scope (mirror of HomeSummary's source-of-truth — settings)
+  const scope = $derived<'portugal' | 'schengen'>(
+    data.settings.defaultScopeView === 'schengen' ? 'schengen' : 'portugal'
+  );
+
+  // "Other-scope" chip below the hero — opposite scope at a glance
+  const otherCompliance = $derived(
+    compliance ? (scope === 'portugal' ? compliance.schengen : compliance.portugal) : null
+  );
+  const otherScopeLabel = $derived(scope === 'portugal' ? 'Schengen' : 'Portugal');
+  const otherDaysLeft = $derived(
+    otherCompliance
+      ? Math.max(0, otherCompliance.interpolated.budgetDays - otherCompliance.interpolated.used)
+      : 0
+  );
+  const otherPct = $derived(
+    otherCompliance && otherCompliance.interpolated.budgetDays > 0
+      ? Math.min(
+          100,
+          Math.round(
+            (otherCompliance.interpolated.used / otherCompliance.interpolated.budgetDays) * 100
+          )
+        )
+      : 0
+  );
+
+  // Planned-trips impact card — render only when planned trips exist
+  const hasPlanned = $derived(data.trips.some((t) => t.status === 'planned'));
+
+  const portugalNowLeft = $derived(
+    compliance
+      ? Math.max(
+          0,
+          compliance.portugal.interpolated.budgetDays - compliance.portugal.interpolated.used
+        )
+      : 0
+  );
+  const portugalProjectedLeft = $derived(
+    compliance
+      ? Math.max(
+          0,
+          compliance.portugal.interpolated.budgetDays -
+            compliance.portugal.projectedAfterPlanned.interpolatedUsed
+        )
+      : 0
+  );
+  const schengenNowLeft = $derived(
+    compliance
+      ? Math.max(
+          0,
+          compliance.schengen.interpolated.budgetDays - compliance.schengen.interpolated.used
+        )
+      : 0
+  );
+  const schengenProjectedLeft = $derived(
+    compliance
+      ? Math.max(
+          0,
+          compliance.schengen.interpolated.budgetDays -
+            compliance.schengen.projectedAfterPlanned.interpolatedUsed
+        )
+      : 0
+  );
 </script>
 
 {#if !data.loaded}
@@ -31,13 +93,13 @@
     <a href={resolve('/cards')} class="text-sm underline">Add a card →</a>
   </div>
 {:else if compliance}
-  <!-- Hero summary (always reflects today; the toggle below does not affect it) -->
-  <div class="mb-4">
-    <HomeSummary card={activeCard} {compliance} />
+  <!-- HERO -->
+  <div class="mb-3">
+    <HomeSummary {compliance} />
   </div>
 
   {#if compliance.portugal.consecutive.currentlyAbroad}
-    <div class="card mb-4 border-l-4 border-amber-400 !rounded-l-md">
+    <div class="card mb-3 border-l-4 border-amber-400 !rounded-l-md">
       <div class="text-sm">
         <strong>You are currently abroad —</strong> day {compliance.portugal.consecutive
           .currentStreakDays}. Return by
@@ -47,68 +109,45 @@
     </div>
   {/if}
 
-  <!-- View toggle -->
-  <div class="tab-toggle mb-4">
-    <button
-      class="tab-toggle-btn {view === 'today' ? 'tab-toggle-btn-active' : ''}"
-      onclick={() => (view = 'today')}>Current count</button
-    >
-    <button
-      class="tab-toggle-btn {view === 'projected' ? 'tab-toggle-btn-active' : ''}"
-      onclick={() => (view = 'projected')}>Including planned trips</button
-    >
-  </div>
+  <!-- Other-scope chip (single line) -->
+  {#if otherCompliance}
+    <p class="caption mb-4 text-center">
+      <span class="text-neutral-500">{otherScopeLabel}:</span>
+      <strong>{otherDaysLeft} days left</strong>
+      <span class="text-neutral-400">·</span>
+      <span class="text-neutral-500">{otherPct}% used</span>
+    </p>
+  {/if}
 
-  <!-- Absence tiles -->
-  <div class="mb-4 grid grid-cols-2 gap-3">
-    <AbsenceTile
-      label="Outside Portugal"
-      used={view === 'today'
-        ? compliance.portugal.interpolated.used
-        : compliance.portugal.projectedAfterPlanned.interpolatedUsed}
-      budget={compliance.portugal.interpolated.budgetDays}
-      sub={compliance.portugal.interpolated.budgetMonthsLabel}
-    >
-      {#snippet icon()}
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.75"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="h-4 w-4"
-          aria-hidden="true"
-        >
-          <circle cx="12" cy="12" r="9" />
-          <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" />
-        </svg>
-      {/snippet}
-    </AbsenceTile>
-    <AbsenceTile
-      label="Outside Schengen"
-      used={view === 'today'
-        ? compliance.schengen.interpolated.used
-        : compliance.schengen.projectedAfterPlanned.interpolatedUsed}
-      budget={compliance.schengen.interpolated.budgetDays}
-      sub={compliance.schengen.interpolated.budgetMonthsLabel}
-    >
-      {#snippet icon()}
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.75"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="h-4 w-4"
-          aria-hidden="true"
-        >
-          <path d="M12 3l8 3v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-3z" />
-        </svg>
-      {/snippet}
-    </AbsenceTile>
-  </div>
+  <!-- Planned trips impact (only if any planned trip exists) -->
+  {#if hasPlanned}
+    <div class="card mb-4 space-y-3">
+      <h3 class="section-title">Planned trips impact</h3>
+      <p class="caption-muted">
+        If you take your planned trips, your remaining days will change like this:
+      </p>
+      <div class="space-y-1.5 text-sm">
+        <div class="flex items-center justify-between">
+          <span class="text-neutral-600">Portugal</span>
+          <span>
+            <span class="text-neutral-500">{portugalNowLeft}</span>
+            <span class="text-neutral-400">→</span>
+            <strong>{portugalProjectedLeft}</strong>
+            <span class="text-neutral-500">days left</span>
+          </span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-neutral-600">Schengen</span>
+          <span>
+            <span class="text-neutral-500">{schengenNowLeft}</span>
+            <span class="text-neutral-400">→</span>
+            <strong>{schengenProjectedLeft}</strong>
+            <span class="text-neutral-500">days left</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  {/if}
 
   <!-- Longest single absence -->
   <div class="card mb-4 flex items-center gap-3">
@@ -139,4 +178,9 @@
   </div>
 
   <Timeline card={activeCard} trips={data.trips} {today} />
+
+  <!-- Footnote at the very end -->
+  <p class="caption-muted mt-4 text-center">
+    8 months (≈244 days) · Calculated at 30.4375 days/month
+  </p>
 {/if}
