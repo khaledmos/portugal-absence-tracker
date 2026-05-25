@@ -80,25 +80,89 @@
   </div>
 </section>
 
-<section class="card mb-4 space-y-3">
-  <h2 class="section-title">Backup</h2>
-  <p class="caption-muted">
-    Last backup: {data.settings.lastBackupAt
-      ? new Date(data.settings.lastBackupAt).toLocaleString()
-      : 'never'}
-  </p>
-  <button class="btn-primary w-full" onclick={exportFile}>Export JSON</button>
-  <div>
-    <label for="import-file" class="input-label">Import JSON</label>
-    <input
-      id="import-file"
-      type="file"
-      accept="application/json"
-      class="block w-full text-sm text-neutral-700 file:mr-3 file:rounded-lg file:border-0 file:bg-neutral-100 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-neutral-700 hover:file:bg-neutral-200"
-      onchange={importFile}
-    />
+<section class="card mb-4 space-y-4">
+  <h2 class="section-title">Install &amp; backup</h2>
+
+  <!-- Install guidance -->
+  <div class="space-y-2">
+    <h3 class="text-sm font-semibold">Install this app</h3>
+    <p class="text-sm leading-relaxed">
+      <strong>iPhone:</strong> Open the app in Safari, tap <strong>Share</strong>, then
+      <strong>Add to Home Screen</strong>.
+    </p>
+    <p class="text-sm leading-relaxed">
+      <strong>Android:</strong> Open the app in Chrome, tap the three-dot menu, then
+      <strong>Install app</strong> or <strong>Add to Home screen</strong>.
+    </p>
   </div>
-  {#if importStatus}<div class="caption">{importStatus}</div>{/if}
+
+  <div class="card-divider"></div>
+
+  <!-- Backup explanation -->
+  <div class="space-y-2">
+    <h3 class="text-sm font-semibold">Back up your data</h3>
+    <p class="text-sm leading-relaxed">
+      Your data is stored only on this device and browser. It does not sync automatically between
+      devices.
+    </p>
+    <p class="text-sm leading-relaxed">
+      Use <strong>Export JSON</strong> to save a backup file. Use <strong>Import JSON</strong> to restore
+      your data or move it to another device.
+    </p>
+    <p class="caption-muted">Tip: Back up your data after adding or editing important trips.</p>
+  </div>
+
+  <!-- Backup actions -->
+  <div class="space-y-3">
+    <p class="caption-muted">
+      Last backup: {data.settings.lastBackupAt
+        ? new Date(data.settings.lastBackupAt).toLocaleString()
+        : 'never'}
+    </p>
+    <button class="btn-primary w-full" onclick={exportFile}>Export JSON</button>
+    <div>
+      <label for="import-file" class="input-label">Import JSON</label>
+      <input
+        id="import-file"
+        type="file"
+        accept="application/json"
+        class="block w-full text-sm text-neutral-700 file:mr-3 file:rounded-lg file:border-0 file:bg-neutral-100 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-neutral-700 hover:file:bg-neutral-200"
+        onchange={importFile}
+      />
+    </div>
+    {#if importStatus}<div class="caption">{importStatus}</div>{/if}
+  </div>
+</section>
+
+<section class="card mb-4 space-y-3">
+  <h2 class="section-title">How to use the app</h2>
+  <ol class="space-y-3 text-sm leading-relaxed">
+    <li>
+      <strong>1. Add your active residence card.</strong><br />
+      Enter the start and end dates of your current card.
+    </li>
+    <li>
+      <strong>2. Add your trips.</strong><br />
+      Use the dates you left and returned to Portugal.
+    </li>
+    <li>
+      <strong
+        >3. For trips outside Schengen, add Schengen exit details if they differ from your Portugal
+        dates.</strong
+      ><br />
+      For example, if you flew Lisbon → Madrid → Istanbul, your Portugal exit date and Schengen exit date
+      may be different.
+    </li>
+    <li>
+      <strong>4. Check your Home tab.</strong><br />
+      The Home tab shows your remaining days, current absence count, planned-trip projection, longest
+      single absence, and how your absences fall across the card period.
+    </li>
+    <li>
+      <strong>5. Back up regularly.</strong><br />
+      Export JSON after important changes.
+    </li>
+  </ol>
 </section>
 
 <section class="card mb-4 space-y-3 text-sm">

@@ -4,11 +4,14 @@ test('first run flow: accept disclaimer, add card, add trip, see dashboard', asy
   await page.goto('/');
 
   // Disclaimer modal blocks until accepted.
-  await expect(page.getByText('Before you start')).toBeVisible();
+  await expect(page.getByText('Important notice')).toBeVisible();
   await page.getByRole('button', { name: 'I understand' }).click();
+  // Wait for the modal to fully dismiss (settings write completes) before
+  // navigating — otherwise the next page load can re-mount the modal.
+  await expect(page.getByText('Important notice')).not.toBeVisible();
 
-  // No active card → CTA visible.
-  await expect(page.getByRole('link', { name: /Add a card/ })).toBeVisible();
+  // No active card → onboarding card visible with "Start tracking" CTA.
+  await expect(page.getByRole('link', { name: 'Start tracking' })).toBeVisible();
 
   // Add a card.
   await page.goto('/cards/');

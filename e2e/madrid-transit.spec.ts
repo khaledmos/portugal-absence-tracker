@@ -4,7 +4,7 @@ test('Madrid-transit trip produces distinct Portugal and Schengen absence', asyn
   await page.goto('/');
   await page.getByRole('button', { name: 'I understand' }).click();
   // Wait for the disclaimer modal to fully dismiss before navigating.
-  await expect(page.getByText('Before you start')).not.toBeVisible();
+  await expect(page.getByText('Important notice')).not.toBeVisible();
 
   // Card
   await page.goto('/cards/');

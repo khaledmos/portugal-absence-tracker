@@ -3,6 +3,7 @@
   import { data, todayISO } from '$lib/stores/data.svelte';
   import { computeCardCompliance } from '$lib/engine/compliance';
   import HomeSummary from '$lib/components/HomeSummary.svelte';
+  import OnboardingCard from '$lib/components/OnboardingCard.svelte';
   import Timeline from '$lib/components/Timeline.svelte';
 
   const today = todayISO();
@@ -87,7 +88,11 @@
 
 {#if !data.loaded}
   <p class="caption">Loading…</p>
+{:else if data.cards.length === 0}
+  <!-- Fresh user — full onboarding card (install + backup + sync guidance) -->
+  <OnboardingCard />
 {:else if !activeCard}
+  <!-- Existing user, no card active right now (e.g. last card just expired) -->
   <div class="card text-center">
     <p class="mb-2">No active residence card.</p>
     <a href={resolve('/cards')} class="text-sm underline">Add a card →</a>
