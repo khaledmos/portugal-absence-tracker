@@ -2,8 +2,6 @@
   import { data, todayISO } from '$lib/stores/data.svelte';
   import { computeCardCompliance } from '$lib/engine/compliance';
   import CardForm from './CardForm.svelte';
-  import PtFlag from '$lib/components/PtFlag.svelte';
-  import EuFlag from '$lib/components/EuFlag.svelte';
   import type { Card } from '$lib/domain/types';
 
   let editing = $state<Card | null>(null);
@@ -82,19 +80,13 @@
       </div>
 
       <div class="mt-4 grid grid-cols-2 gap-3">
-        <div class="flex items-center gap-2">
-          <PtFlag size={20} />
-          <div class="text-sm">
-            Portugal: <strong>{compliance.portugal.interpolated.used}</strong> / {compliance
-              .portugal.interpolated.budgetDays} d
-          </div>
+        <div class="text-sm">
+          Portugal: <strong>{compliance.portugal.interpolated.used}</strong> / {compliance.portugal
+            .interpolated.budgetDays} d
         </div>
-        <div class="flex items-center gap-2">
-          <EuFlag size={20} />
-          <div class="text-sm">
-            Schengen: <strong>{compliance.schengen.interpolated.used}</strong> / {compliance
-              .schengen.interpolated.budgetDays} d
-          </div>
+        <div class="text-sm">
+          Schengen: <strong>{compliance.schengen.interpolated.used}</strong> / {compliance.schengen
+            .interpolated.budgetDays} d
         </div>
       </div>
 

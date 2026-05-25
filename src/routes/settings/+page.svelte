@@ -172,7 +172,7 @@
   <h2 class="section-title">About this app</h2>
   <p>
     This app helps Portuguese residence permit holders track time spent outside Portugal and the
-    Schengen Area against <strong>Article 85.2 of Lei n.º 23/2007</strong>.
+    Schengen Area against <strong>Article 85 of Lei n.º 23/2007</strong>.
   </p>
   <p>
     It is not legal advice. For decisions affecting your residency, consult AIMA or a licensed
@@ -192,15 +192,14 @@
   <h2 class="section-title">Privacy notice</h2>
   <p>
     Your residence card details, trip dates, destinations, purposes, and notes are stored locally on
-    your device and are not sent to the app creator.
+    this device and are not sent to the app creator.
   </p>
   <p>
-    If basic privacy-friendly analytics are enabled, they are used only to understand general app
-    usage, such as visits, device type, approximate country, and returning visits. Analytics do not
-    include your travel or residence data.
+    Basic privacy-friendly analytics may be used to understand general app usage, such as visits.
+    Analytics do not include your travel or residence data.
   </p>
   <p class="caption">
-    Local app data stays on your device until you delete it, clear browser storage, or uninstall the
-    app.
+    Your local app data stays on this device until you delete it, clear browser storage, or
+    uninstall the app.
   </p>
 </section>
