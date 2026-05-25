@@ -3,7 +3,7 @@ import type { Card, Trip, Settings, ISODate } from '../domain/types';
 
 const DEFAULT_SETTINGS: Settings = {
   daycountConvention: 'standard',
-  defaultScopeView: 'both'
+  defaultScopeView: 'portugal'
 };
 
 export class CardRepo {

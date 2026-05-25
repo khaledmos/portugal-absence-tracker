@@ -43,8 +43,10 @@ test('Madrid-transit trip produces distinct Portugal and Schengen absence', asyn
   await expect(page.getByText('Your remaining allowance')).toBeVisible();
 
   // Portugal scope is the active hero default. PT absence = 13 d.
-  await expect(page.getByText("You've used 13 / 244 days of your absence allowance")).toBeVisible();
+  await expect(
+    page.getByText("You've used 13 out of 244 days of your absence allowance")
+  ).toBeVisible();
 
   // Schengen absence = 12 d → other-scope chip shows 232 days left (244 − 12).
-  await expect(page.getByText(/Schengen:.*232 days left/)).toBeVisible();
+  await expect(page.getByText(/Schengen absence:.*232 days left/)).toBeVisible();
 });

@@ -112,7 +112,7 @@
   <!-- Other-scope chip (single line) -->
   {#if otherCompliance}
     <p class="caption mb-4 text-center">
-      <span class="text-neutral-500">{otherScopeLabel}:</span>
+      <span class="text-neutral-500">{otherScopeLabel} absence:</span>
       <strong>{otherDaysLeft} days left</strong>
       <span class="text-neutral-400">·</span>
       <span class="text-neutral-500">{otherPct}% used</span>

@@ -34,7 +34,10 @@
   const absenceColor = $derived(
     absencePct < 50 ? '#10b981' : absencePct < 80 ? '#f59e0b' : '#ef4444'
   );
+  // Short label used in the legend (e.g. "Portugal absence: 53% used").
   const scopeLabel = $derived(scope === 'portugal' ? 'Portugal' : 'Schengen');
+  // Long label used in the sentence — "the Schengen Area" reads better than bare "Schengen".
+  const scopeSentenceLabel = $derived(scope === 'portugal' ? 'Portugal' : 'the Schengen Area');
 
   // Ring geometry (SVG viewBox 200×200, centre 100,100)
   const OUTER_R = 88;
@@ -63,6 +66,10 @@
     <g clip-path="url(#pt-clip-{size})">
       <rect x="0" y="0" width="9" height="24" fill="#006837" />
       <rect x="9" y="0" width="15" height="24" fill="#D52B1E" />
+      <!-- Simplified coat of arms at the green/red boundary -->
+      <circle cx="9" cy="12" r="3.5" fill="#FFCC00" />
+      <circle cx="9" cy="12" r="2.2" fill="#D52B1E" />
+      <circle cx="9" cy="12" r="0.9" fill="#FFFFFF" />
     </g>
     <circle cx="12" cy="12" r="11" fill="none" stroke="rgba(0,0,0,0.08)" stroke-width="0.5" />
   </svg>
@@ -109,9 +116,10 @@
     </button>
   </div>
 
-  <!-- Title + active-scope flag -->
-  <div class="mb-3 flex items-center justify-center gap-2">
-    {#if scope === 'portugal'}{@render ptFlag(22)}{:else}{@render euFlag(22)}{/if}
+  <!-- Title (no inline flag — scope is already conveyed by the active tab,
+       legend, and sentence; pairing a scope flag with "Your remaining
+       allowance" risks implying each scope has its own separate budget). -->
+  <div class="mb-3 text-center">
     <h2 class="section-title">Your remaining allowance</h2>
   </div>
 
@@ -177,12 +185,12 @@
     <!-- Sentence -->
     <p class="mt-4 text-center text-[15px] leading-snug">
       You can spend up to <strong>{absenceDaysRemaining} more days</strong> outside
-      {scopeLabel} within the <strong>{cardDaysRemaining} days</strong> remaining on this card.
+      {scopeSentenceLabel} within the <strong>{cardDaysRemaining} days</strong> remaining on this card.
     </p>
 
     <!-- Subtitle -->
     <p class="caption-muted mt-2">
-      You've used {absenceUsed} / {absenceBudget} days of your absence allowance
+      You've used {absenceUsed} out of {absenceBudget} days of your absence allowance
     </p>
   </div>
 </div>

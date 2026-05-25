@@ -67,16 +67,16 @@
     <select
       id="dsv"
       class="input"
-      value={data.settings.defaultScopeView}
+      value={data.settings.defaultScopeView === 'schengen' ? 'schengen' : 'portugal'}
       onchange={(e) =>
         data.updateSettings({
           defaultScopeView: (e.target as HTMLSelectElement).value as ScopeView
         })}
     >
-      <option value="both">Both Portugal &amp; Schengen</option>
-      <option value="portugal">Portugal only</option>
-      <option value="schengen">Schengen only</option>
+      <option value="portugal">Portugal (legal limit — default)</option>
+      <option value="schengen">Schengen (practical for land travel)</option>
     </select>
+    <p class="caption-muted mt-1.5">Chooses which scope the Home tab's hero summary opens with.</p>
   </div>
 </section>
 

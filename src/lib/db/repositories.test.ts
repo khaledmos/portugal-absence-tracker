@@ -103,7 +103,7 @@ describe('SettingsRepo', () => {
   it('returns defaults when no settings stored', async () => {
     const s = await repos.settings.get();
     expect(s.daycountConvention).toBe('standard');
-    expect(s.defaultScopeView).toBe('both');
+    expect(s.defaultScopeView).toBe('portugal');
   });
 
   it('persists updates', async () => {
