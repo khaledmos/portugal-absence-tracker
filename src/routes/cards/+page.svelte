@@ -2,6 +2,8 @@
   import { data, todayISO } from '$lib/stores/data.svelte';
   import { computeCardCompliance } from '$lib/engine/compliance';
   import CardForm from './CardForm.svelte';
+  import PtFlag from '$lib/components/PtFlag.svelte';
+  import EuFlag from '$lib/components/EuFlag.svelte';
   import type { Card } from '$lib/domain/types';
 
   let editing = $state<Card | null>(null);
@@ -23,9 +25,9 @@
   }
 
   function permitLabel(type: Card['type']) {
-    if (type === 'initial_2yr') return 'Initial · 2 yr';
-    if (type === 'subsequent_3yr') return 'Subsequent temporary · 3 yr';
-    return 'Permanent · 5 yr';
+    if (type === 'initial_2yr') return 'Initial temporary residency · 2 years';
+    if (type === 'subsequent_3yr') return 'Subsequent temporary residency · 3 years';
+    return 'Permanent residency · 5 years';
   }
 
   function statusLabel(card: Card) {
@@ -81,41 +83,14 @@
 
       <div class="mt-4 grid grid-cols-2 gap-3">
         <div class="flex items-center gap-2">
-          <span class="metric-icon-circle">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.75"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="h-4 w-4"
-              aria-hidden="true"
-            >
-              <circle cx="12" cy="12" r="9" />
-              <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" />
-            </svg>
-          </span>
+          <PtFlag size={20} />
           <div class="text-sm">
             Portugal: <strong>{compliance.portugal.interpolated.used}</strong> / {compliance
               .portugal.interpolated.budgetDays} d
           </div>
         </div>
         <div class="flex items-center gap-2">
-          <span class="metric-icon-circle">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.75"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="h-4 w-4"
-              aria-hidden="true"
-            >
-              <path d="M12 3l8 3v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-3z" />
-            </svg>
-          </span>
+          <EuFlag size={20} />
           <div class="text-sm">
             Schengen: <strong>{compliance.schengen.interpolated.used}</strong> / {compliance
               .schengen.interpolated.budgetDays} d

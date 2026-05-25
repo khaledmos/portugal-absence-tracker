@@ -1,6 +1,8 @@
 <script lang="ts">
   import { data } from '$lib/stores/data.svelte';
   import type { CardCompliance } from '$lib/engine/compliance';
+  import PtFlag from './PtFlag.svelte';
+  import EuFlag from './EuFlag.svelte';
 
   let { compliance }: { compliance: CardCompliance } = $props();
 
@@ -50,52 +52,7 @@
 
   const outerOffset = $derived(OUTER_C * (1 - cardElapsedPct / 100));
   const innerOffset = $derived(INNER_C * (1 - absencePct / 100));
-
-  // EU-flag star positions: 12 stars evenly spaced on a circle (r=7, viewBox 24×24).
-  const euStars = Array.from({ length: 12 }, (_, i) => {
-    const angle = (i / 12) * 2 * Math.PI - Math.PI / 2;
-    return { cx: 12 + 7 * Math.cos(angle), cy: 12 + 7 * Math.sin(angle) };
-  });
 </script>
-
-{#snippet ptFlag(size: number = 20)}
-  <svg viewBox="0 0 24 24" width={size} height={size} class="flex-shrink-0" aria-label="Portugal">
-    <defs>
-      <clipPath id="pt-clip-{size}"><circle cx="12" cy="12" r="11" /></clipPath>
-    </defs>
-    <g clip-path="url(#pt-clip-{size})">
-      <rect x="0" y="0" width="9" height="24" fill="#006837" />
-      <rect x="9" y="0" width="15" height="24" fill="#D52B1E" />
-      <!-- Coat of arms at the green/red boundary — yellow armillary disc with
-           a small red shield containing a white inner shield. Approximation
-           tuned to read as a crest (not a target) at 18-22px. -->
-      <circle cx="9" cy="12" r="4" fill="#FFCC00" />
-      <!-- Red shield: rounded-top rectangle with a triangular bottom -->
-      <path d="M7.2 10 L10.8 10 L10.8 12.8 L9 14.6 L7.2 12.8 Z" fill="#D52B1E" />
-      <!-- White inner shield -->
-      <path d="M8 10.6 L10 10.6 L10 12.4 L9 13.5 L8 12.4 Z" fill="#FFFFFF" />
-    </g>
-    <circle cx="12" cy="12" r="11" fill="none" stroke="rgba(0,0,0,0.08)" stroke-width="0.5" />
-  </svg>
-{/snippet}
-
-{#snippet euFlag(size: number = 20)}
-  <svg
-    viewBox="0 0 24 24"
-    width={size}
-    height={size}
-    class="flex-shrink-0"
-    aria-label="Schengen Area"
-  >
-    <circle cx="12" cy="12" r="11" fill="#003399" />
-    <g fill="#FFCC00">
-      {#each euStars as s, i (i)}
-        <circle cx={s.cx} cy={s.cy} r="0.9" />
-      {/each}
-    </g>
-    <circle cx="12" cy="12" r="11" fill="none" stroke="rgba(0,0,0,0.08)" stroke-width="0.5" />
-  </svg>
-{/snippet}
 
 <div class="card">
   <!-- Scope tabs -->
@@ -106,8 +63,8 @@
         : ''}"
       onclick={() => switchScope('portugal')}
     >
-      {@render ptFlag(18)}
-      Portugal
+      <PtFlag size={18} />
+      Portugal absence
     </button>
     <button
       class="tab-toggle-btn flex items-center justify-center gap-1.5 {scope === 'schengen'
@@ -115,8 +72,8 @@
         : ''}"
       onclick={() => switchScope('schengen')}
     >
-      {@render euFlag(18)}
-      Schengen
+      <EuFlag size={18} />
+      Schengen absence
     </button>
   </div>
 

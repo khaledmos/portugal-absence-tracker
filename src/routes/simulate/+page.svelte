@@ -50,6 +50,45 @@
           result.after.schengen.interpolated.budgetDays)
   );
 
+  // "Days left" view — convert used → remaining so the simulator's numbers
+  // match the wording the rest of the app uses ("days left", not "used").
+  const ptBeforeLeft = $derived(
+    result
+      ? Math.max(
+          0,
+          result.before.portugal.interpolated.budgetDays -
+            result.before.portugal.projectedAfterPlanned.interpolatedUsed
+        )
+      : 0
+  );
+  const ptAfterLeft = $derived(
+    result
+      ? Math.max(
+          0,
+          result.after.portugal.interpolated.budgetDays -
+            result.after.portugal.projectedAfterPlanned.interpolatedUsed
+        )
+      : 0
+  );
+  const scBeforeLeft = $derived(
+    result
+      ? Math.max(
+          0,
+          result.before.schengen.interpolated.budgetDays -
+            result.before.schengen.projectedAfterPlanned.interpolatedUsed
+        )
+      : 0
+  );
+  const scAfterLeft = $derived(
+    result
+      ? Math.max(
+          0,
+          result.after.schengen.interpolated.budgetDays -
+            result.after.schengen.projectedAfterPlanned.interpolatedUsed
+        )
+      : 0
+  );
+
   async function saveAsPlanned() {
     if (!primaryDestinationCountry) return;
     const trip: Trip = { ...draft, id: uuid() };
@@ -96,19 +135,21 @@
       <h2 class="section-title">Impact</h2>
       <div class="space-y-2 text-[15px]">
         <div class="flex items-center justify-between">
-          <span class="text-neutral-500">Portugal</span>
+          <span class="text-neutral-500">Portugal absence</span>
           <span>
-            {result.before.portugal.projectedAfterPlanned.interpolatedUsed}
+            {ptBeforeLeft}
             <span class="text-neutral-400">→</span>
-            <strong>{result.after.portugal.projectedAfterPlanned.interpolatedUsed}</strong>
+            <strong>{ptAfterLeft}</strong>
+            <span class="text-neutral-500">days left</span>
           </span>
         </div>
         <div class="flex items-center justify-between">
-          <span class="text-neutral-500">Schengen</span>
+          <span class="text-neutral-500">Schengen absence</span>
           <span>
-            {result.before.schengen.projectedAfterPlanned.interpolatedUsed}
+            {scBeforeLeft}
             <span class="text-neutral-400">→</span>
-            <strong>{result.after.schengen.projectedAfterPlanned.interpolatedUsed}</strong>
+            <strong>{scAfterLeft}</strong>
+            <span class="text-neutral-500">days left</span>
           </span>
         </div>
       </div>

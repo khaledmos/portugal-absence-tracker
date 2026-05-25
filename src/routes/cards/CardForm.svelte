@@ -7,7 +7,11 @@
   let { initial, onClose }: { initial?: Card; onClose: () => void } = $props();
 
   let label = $state(untrack(() => initial?.label ?? ''));
-  let type = $state<PermitType>(untrack(() => initial?.type ?? 'subsequent_3yr'));
+  // First-time users (no cards yet) are typically adding their initial 2-year
+  // card; existing users adding a follow-up are usually on a subsequent 3-year.
+  let type = $state<PermitType>(
+    untrack(() => initial?.type ?? (data.cards.length === 0 ? 'initial_2yr' : 'subsequent_3yr'))
+  );
   let issuedDate = $state(untrack(() => initial?.issuedDate ?? ''));
   let expiryDate = $state(untrack(() => initial?.expiryDate ?? ''));
   let notes = $state(untrack(() => initial?.notes ?? ''));

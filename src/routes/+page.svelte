@@ -128,7 +128,7 @@
       </p>
       <div class="space-y-1.5 text-sm">
         <div class="flex items-center justify-between">
-          <span class="text-neutral-600">Portugal</span>
+          <span class="text-neutral-600">Portugal absence</span>
           <span>
             <span class="text-neutral-500">{portugalNowLeft}</span>
             <span class="text-neutral-400">→</span>
@@ -137,7 +137,7 @@
           </span>
         </div>
         <div class="flex items-center justify-between">
-          <span class="text-neutral-600">Schengen</span>
+          <span class="text-neutral-600">Schengen absence</span>
           <span>
             <span class="text-neutral-500">{schengenNowLeft}</span>
             <span class="text-neutral-400">→</span>
