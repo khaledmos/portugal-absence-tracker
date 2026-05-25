@@ -63,7 +63,7 @@
   </div>
 
   <div>
-    <label for="dsv" class="input-label">Default scope view</label>
+    <label for="dsv" class="input-label">Default counting view</label>
     <select
       id="dsv"
       class="input"
@@ -73,10 +73,13 @@
           defaultScopeView: (e.target as HTMLSelectElement).value as ScopeView
         })}
     >
-      <option value="portugal">Portugal (legal limit — default)</option>
-      <option value="schengen">Schengen (practical for land travel)</option>
+      <option value="portugal">Portugal absence (legal baseline — default)</option>
+      <option value="schengen">Schengen exit (practical estimate)</option>
     </select>
-    <p class="caption-muted mt-1.5">Chooses which scope the Home tab's hero summary opens with.</p>
+    <p class="caption-muted mt-1.5">
+      Portuguese residence rules are based on absence from Portugal. Schengen exit view is an
+      optional practical view based on when you leave or re-enter the Schengen Area.
+    </p>
   </div>
 </section>
 
