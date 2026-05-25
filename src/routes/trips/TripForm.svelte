@@ -82,6 +82,47 @@
     return { before, after };
   });
 
+  // "Days left" framing — mirrors the simulator so the wording the user sees
+  // while drafting a trip matches the wording the rest of the app uses.
+  // We project both before/after through `projectedAfterPlanned` so the
+  // numbers account for other planned trips already in the list.
+  const ptBeforeLeft = $derived(
+    preview
+      ? Math.max(
+          0,
+          preview.before.portugal.interpolated.budgetDays -
+            preview.before.portugal.projectedAfterPlanned.interpolatedUsed
+        )
+      : 0
+  );
+  const ptAfterLeft = $derived(
+    preview
+      ? Math.max(
+          0,
+          preview.after.portugal.interpolated.budgetDays -
+            preview.after.portugal.projectedAfterPlanned.interpolatedUsed
+        )
+      : 0
+  );
+  const scBeforeLeft = $derived(
+    preview
+      ? Math.max(
+          0,
+          preview.before.schengen.interpolated.budgetDays -
+            preview.before.schengen.projectedAfterPlanned.interpolatedUsed
+        )
+      : 0
+  );
+  const scAfterLeft = $derived(
+    preview
+      ? Math.max(
+          0,
+          preview.after.schengen.interpolated.budgetDays -
+            preview.after.schengen.projectedAfterPlanned.interpolatedUsed
+        )
+      : 0
+  );
+
   let saveError = $state('');
 
   async function save() {
@@ -224,13 +265,25 @@
   <!-- Live impact preview -->
   {#if preview}
     <div class="rounded-xl bg-emerald-50 p-3 text-xs text-emerald-900">
-      <div class="mb-1 font-semibold">Impact preview</div>
-      Portugal: {preview.before.portugal.interpolated.used} →
-      <strong>{preview.after.portugal.interpolated.used}</strong>
-      / {preview.after.portugal.interpolated.budgetDays} d<br />
-      Schengen: {preview.before.schengen.interpolated.used} →
-      <strong>{preview.after.schengen.interpolated.used}</strong>
-      / {preview.after.schengen.interpolated.budgetDays} d
+      <div class="mb-1.5 font-semibold">Impact preview</div>
+      <div class="flex items-center justify-between">
+        <span>Portugal absence</span>
+        <span>
+          {ptBeforeLeft}
+          <span class="text-emerald-700/60">→</span>
+          <strong>{ptAfterLeft}</strong>
+          <span class="text-emerald-900/70">days left</span>
+        </span>
+      </div>
+      <div class="mt-0.5 flex items-center justify-between">
+        <span>Schengen absence</span>
+        <span>
+          {scBeforeLeft}
+          <span class="text-emerald-700/60">→</span>
+          <strong>{scAfterLeft}</strong>
+          <span class="text-emerald-900/70">days left</span>
+        </span>
+      </div>
     </div>
   {/if}
 

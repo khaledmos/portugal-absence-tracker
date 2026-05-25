@@ -150,7 +150,7 @@
     </p>
 
     <!-- Subtitle -->
-    <p class="caption-muted mt-2">
+    <p class="caption-muted mt-2 text-center">
       You've used {absenceUsed} out of {absenceBudget} days of your absence allowance
     </p>
   </div>
