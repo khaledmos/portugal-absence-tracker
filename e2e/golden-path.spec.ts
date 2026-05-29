@@ -37,8 +37,8 @@ test('first run flow: accept disclaimer, add card, add trip, see dashboard', asy
   // Dashboard hero shows the absence numbers.
   await page.goto('/');
   await expect(page.getByText('Your remaining allowance')).toBeVisible();
-  // Portugal scope is the default; trip 2025-11-04 → 2025-11-12 = 8 days absence.
+  // Hero is Portugal-only; trip 2025-11-04 → 2025-11-12 = 8 days absence.
   await expect(
-    page.getByText("You've used 8 out of 244 days of your absence allowance")
+    page.getByText("You've spent 8 of your 244 allowed days outside Portugal.")
   ).toBeVisible();
 });

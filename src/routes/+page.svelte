@@ -21,35 +21,15 @@
       : null
   );
 
-  // Active scope (mirror of HomeSummary's source-of-truth — settings)
-  const scope = $derived<'portugal' | 'schengen'>(
-    data.settings.defaultScopeView === 'schengen' ? 'schengen' : 'portugal'
-  );
-
-  // "Other-scope" chip below the hero — opposite scope at a glance
-  const otherCompliance = $derived(
-    compliance ? (scope === 'portugal' ? compliance.schengen : compliance.portugal) : null
-  );
-  const otherScopeLabel = $derived(scope === 'portugal' ? 'Schengen' : 'Portugal');
-  const otherDaysLeft = $derived(
-    otherCompliance
-      ? Math.max(0, otherCompliance.interpolated.budgetDays - otherCompliance.interpolated.used)
-      : 0
-  );
-  const otherPct = $derived(
-    otherCompliance && otherCompliance.interpolated.budgetDays > 0
-      ? Math.min(
-          100,
-          Math.round(
-            (otherCompliance.interpolated.used / otherCompliance.interpolated.budgetDays) * 100
-          )
-        )
-      : 0
-  );
+  // Schengen is shown only as a neutral practical "recorded" view — never as
+  // an allowance or "days left" — so the hero stays Portugal-only and this
+  // figure reports the number of Schengen-absence days recorded so far.
+  const schengenRecorded = $derived(compliance ? compliance.schengen.interpolated.used : 0);
 
   // Planned-trips impact card — render only when planned trips exist
   const hasPlanned = $derived(data.trips.some((t) => t.status === 'planned'));
 
+  // Portugal: legal allowance → remaining ("days left") framing.
   const portugalNowLeft = $derived(
     compliance
       ? Math.max(
@@ -67,22 +47,10 @@
         )
       : 0
   );
-  const schengenNowLeft = $derived(
-    compliance
-      ? Math.max(
-          0,
-          compliance.schengen.interpolated.budgetDays - compliance.schengen.interpolated.used
-        )
-      : 0
-  );
-  const schengenProjectedLeft = $derived(
-    compliance
-      ? Math.max(
-          0,
-          compliance.schengen.interpolated.budgetDays -
-            compliance.schengen.projectedAfterPlanned.interpolatedUsed
-        )
-      : 0
+  // Schengen: practical view → recorded/used ("days recorded") framing.
+  const schengenNowUsed = $derived(compliance ? compliance.schengen.interpolated.used : 0);
+  const schengenProjectedUsed = $derived(
+    compliance ? compliance.schengen.projectedAfterPlanned.interpolatedUsed : 0
   );
 </script>
 
@@ -114,15 +82,26 @@
     </div>
   {/if}
 
-  <!-- Other-scope chip (single line) -->
-  {#if otherCompliance}
-    <p class="caption mb-4 text-center">
-      <span class="text-neutral-500">{otherScopeLabel} absence:</span>
-      <strong>{otherDaysLeft} days left</strong>
-      <span class="text-neutral-400">·</span>
-      <span class="text-neutral-500">{otherPct}% used</span>
-    </p>
-  {/if}
+  <!-- Schengen recorded chip (neutral, practical view — not an allowance) -->
+  <p class="caption mb-4 flex items-center justify-center gap-1.5 text-center">
+    <!-- Neutral globe icon (deliberately not the EU flag — this is a
+         practical recorded view, not a legal limit). -->
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.75"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="h-3.5 w-3.5 text-neutral-400"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" />
+    </svg>
+    <span class="text-neutral-500">Schengen absence:</span>
+    <strong>{schengenRecorded} days recorded</strong>
+  </p>
 
   <!-- Planned trips impact (only if any planned trip exists) -->
   {#if hasPlanned}
@@ -144,10 +123,10 @@
         <div class="flex items-center justify-between">
           <span class="text-neutral-600">Schengen absence</span>
           <span>
-            <span class="text-neutral-500">{schengenNowLeft}</span>
+            <span class="text-neutral-500">{schengenNowUsed}</span>
             <span class="text-neutral-400">→</span>
-            <strong>{schengenProjectedLeft}</strong>
-            <span class="text-neutral-500">days left</span>
+            <strong>{schengenProjectedUsed}</strong>
+            <span class="text-neutral-500">days recorded</span>
           </span>
         </div>
       </div>
