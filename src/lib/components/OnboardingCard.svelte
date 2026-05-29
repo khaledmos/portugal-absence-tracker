@@ -29,8 +29,8 @@
       style="background: var(--color-surface-soft);"
     >
       <div>
-        <strong>iPhone</strong> — Open in Safari, tap <strong>Share</strong>, then
-        <strong>Add to Home Screen</strong>.
+        <strong>iPhone</strong> — Open in Safari, tap the three-dot menu, tap
+        <strong>Share</strong>, then <strong>Add to Home Screen</strong>.
       </div>
       <div>
         <strong>Android</strong> — Open in Chrome, tap the three-dot menu, then

@@ -75,8 +75,8 @@
   <div class="space-y-2">
     <h3 class="text-sm font-semibold">Install this app</h3>
     <p class="text-sm leading-relaxed">
-      <strong>iPhone:</strong> Open the app in Safari, tap <strong>Share</strong>, then
-      <strong>Add to Home Screen</strong>.
+      <strong>iPhone:</strong> Open the app in Safari, tap the three-dot menu, tap
+      <strong>Share</strong>, then <strong>Add to Home Screen</strong>.
     </p>
     <p class="text-sm leading-relaxed">
       <strong>Android:</strong> Open the app in Chrome, tap the three-dot menu, then
