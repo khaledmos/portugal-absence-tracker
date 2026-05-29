@@ -1,7 +1,7 @@
 <script lang="ts">
   import { data, repos } from '$lib/stores/data.svelte';
   import { exportToJSON, importFromJSON } from '$lib/db/backup';
-  import type { DaycountConvention, ScopeView } from '$lib/domain/types';
+  import type { DaycountConvention } from '$lib/domain/types';
 
   let importStatus = $state('');
 
@@ -62,25 +62,10 @@
     </select>
   </div>
 
-  <div>
-    <label for="dsv" class="input-label">Default counting view</label>
-    <select
-      id="dsv"
-      class="input"
-      value={data.settings.defaultScopeView === 'schengen' ? 'schengen' : 'portugal'}
-      onchange={(e) =>
-        data.updateSettings({
-          defaultScopeView: (e.target as HTMLSelectElement).value as ScopeView
-        })}
-    >
-      <option value="portugal">Portugal absence (legal baseline — default)</option>
-      <option value="schengen">Schengen exit (practical estimate)</option>
-    </select>
-    <p class="caption-muted mt-1.5">
-      Portuguese residence rules are based on absence from Portugal. Schengen exit view is an
-      optional practical view based on when you leave or re-enter the Schengen Area.
-    </p>
-  </div>
+  <p class="caption-muted">
+    Your allowance is based on absence from Portugal — the legal baseline under Article 85. Schengen
+    absence is shown alongside as a practical recorded view only, not a separate limit.
+  </p>
 </section>
 
 <section class="card mb-4 space-y-4">

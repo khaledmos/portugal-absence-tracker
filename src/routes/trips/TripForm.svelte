@@ -82,10 +82,10 @@
     return { before, after };
   });
 
-  // "Days left" framing — mirrors the simulator so the wording the user sees
-  // while drafting a trip matches the wording the rest of the app uses.
-  // We project both before/after through `projectedAfterPlanned` so the
-  // numbers account for other planned trips already in the list.
+  // Mirrors the home/simulator framing: Portugal is the legal allowance
+  // (remaining "days left"); Schengen is a practical recorded view
+  // (used "days recorded"). Both project through `projectedAfterPlanned`
+  // so existing planned trips are baked into "before".
   const ptBeforeLeft = $derived(
     preview
       ? Math.max(
@@ -104,23 +104,11 @@
         )
       : 0
   );
-  const scBeforeLeft = $derived(
-    preview
-      ? Math.max(
-          0,
-          preview.before.schengen.interpolated.budgetDays -
-            preview.before.schengen.projectedAfterPlanned.interpolatedUsed
-        )
-      : 0
+  const scBeforeUsed = $derived(
+    preview ? preview.before.schengen.projectedAfterPlanned.interpolatedUsed : 0
   );
-  const scAfterLeft = $derived(
-    preview
-      ? Math.max(
-          0,
-          preview.after.schengen.interpolated.budgetDays -
-            preview.after.schengen.projectedAfterPlanned.interpolatedUsed
-        )
-      : 0
+  const scAfterUsed = $derived(
+    preview ? preview.after.schengen.projectedAfterPlanned.interpolatedUsed : 0
   );
 
   let saveError = $state('');
@@ -278,10 +266,10 @@
       <div class="mt-0.5 flex items-center justify-between">
         <span>Schengen absence</span>
         <span>
-          {scBeforeLeft}
+          {scBeforeUsed}
           <span class="text-emerald-700/60">→</span>
-          <strong>{scAfterLeft}</strong>
-          <span class="text-emerald-900/70">days left</span>
+          <strong>{scAfterUsed}</strong>
+          <span class="text-emerald-900/70">days recorded</span>
         </span>
       </div>
     </div>

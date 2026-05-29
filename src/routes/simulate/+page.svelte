@@ -42,16 +42,16 @@
     return { before, after };
   });
 
+  // The over-limit warning is judged against Portugal only — that is the
+  // legal allowance (Article 85). Schengen is a practical recorded view, so
+  // exceeding it is not framed as breaching a limit.
   const overLimit = $derived(
     result &&
-      (result.after.portugal.projectedAfterPlanned.interpolatedUsed >
-        result.after.portugal.interpolated.budgetDays ||
-        result.after.schengen.projectedAfterPlanned.interpolatedUsed >
-          result.after.schengen.interpolated.budgetDays)
+      result.after.portugal.projectedAfterPlanned.interpolatedUsed >
+        result.after.portugal.interpolated.budgetDays
   );
 
-  // "Days left" view — convert used → remaining so the simulator's numbers
-  // match the wording the rest of the app uses ("days left", not "used").
+  // Portugal: legal allowance → remaining ("days left") framing.
   const ptBeforeLeft = $derived(
     result
       ? Math.max(
@@ -70,23 +70,12 @@
         )
       : 0
   );
-  const scBeforeLeft = $derived(
-    result
-      ? Math.max(
-          0,
-          result.before.schengen.interpolated.budgetDays -
-            result.before.schengen.projectedAfterPlanned.interpolatedUsed
-        )
-      : 0
+  // Schengen: practical view → recorded/used ("days recorded") framing.
+  const scBeforeUsed = $derived(
+    result ? result.before.schengen.projectedAfterPlanned.interpolatedUsed : 0
   );
-  const scAfterLeft = $derived(
-    result
-      ? Math.max(
-          0,
-          result.after.schengen.interpolated.budgetDays -
-            result.after.schengen.projectedAfterPlanned.interpolatedUsed
-        )
-      : 0
+  const scAfterUsed = $derived(
+    result ? result.after.schengen.projectedAfterPlanned.interpolatedUsed : 0
   );
 
   async function saveAsPlanned() {
@@ -146,10 +135,10 @@
         <div class="flex items-center justify-between">
           <span class="text-neutral-500">Schengen absence</span>
           <span>
-            {scBeforeLeft}
+            {scBeforeUsed}
             <span class="text-neutral-400">→</span>
-            <strong>{scAfterLeft}</strong>
-            <span class="text-neutral-500">days left</span>
+            <strong>{scAfterUsed}</strong>
+            <span class="text-neutral-500">days recorded</span>
           </span>
         </div>
       </div>
@@ -161,8 +150,8 @@
         <span class="text-base">{overLimit ? '⚠️' : '✓'}</span>
         <span>
           {overLimit
-            ? 'This trip would exceed your interpolated absence budget.'
-            : 'Within all limits.'}
+            ? 'This trip would exceed your Portugal absence allowance.'
+            : 'Within your Portugal absence allowance.'}
         </span>
       </div>
       <button class="btn-primary w-full" onclick={saveAsPlanned}>Save as planned trip</button>
