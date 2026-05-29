@@ -156,8 +156,8 @@
 <section class="card mb-4 space-y-3 text-sm">
   <h2 class="section-title">About this app</h2>
   <p>
-    This app helps Portuguese residence permit holders track time spent outside Portugal and the
-    Schengen Area against <strong>Article 85 of Lei n.º 23/2007</strong>.
+    This app helps Portuguese residence permit holders track time spent outside Portugal against
+    <strong>Article 85 of Lei n.º 23/2007</strong>.
   </p>
   <p>
     It is not legal advice. For decisions affecting your residency, consult AIMA or a licensed
